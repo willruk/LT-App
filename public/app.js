@@ -1,9 +1,11 @@
+console.log("NEW VERSION LOADED");
 const birthdayInput = document.getElementById("birthday");
 const goButton = document.getElementById("go");
 const rangeNote = document.getElementById("rangeNote");
 const birthResult = document.getElementById("birthResult");
 const yearlyResult = document.getElementById("yearlyResult");
 
+// Safe HTML escape (no replaceAll issues)
 function escapeHtml(str) {
 return String(str)
 .replace(/&/g, "&")
@@ -13,47 +15,61 @@ return String(str)
 .replace(/'/g, "'");
 }
 
+// Render birth song
 function renderBirthSong(data) {
-const blurb = data.birthSong.blurb
+const blurb = data.birthSong && data.birthSong.blurb
 ? escapeHtml(data.birthSong.blurb)
 : "No database blurb available.";
 
-birthResult.innerHTML = `     <div class="song-hero">${escapeHtml(data.birthSong.title)}</div>     <div class="artist">${escapeHtml(data.birthSong.artist)}</div>     <div class="note">
-      No.1 from ${escapeHtml(data.birthSong.startDateFormatted)}     </div>     <div class="note" style="margin-top:10px">
-      ${blurb}     </div>
-  `;
+birthResult.innerHTML =
+'<div class="song-hero">' + escapeHtml(data.birthSong.title) + '</div>' +
+'<div class="artist">' + escapeHtml(data.birthSong.artist) + '</div>' +
+'<div class="note">No.1 from ' + escapeHtml(data.birthSong.startDateFormatted) + '</div>' +
+'<div class="note" style="margin-top:10px">' + blurb + '</div>';
 }
 
+// Render yearly songs
 function renderYearlySongs(rows) {
-if (!rows.length) {
+if (!rows || !rows.length) {
 yearlyResult.innerHTML = "No matches found.";
 return;
 }
 
-const html = rows.map(function(row) {
-return `       <div class="year-card">         <div class="year-header">           <div>When you were ${row.age}</div>           <div class="year">${row.year}</div>         </div>         <div>${escapeHtml(row.title)}</div>         <div class="artist">${escapeHtml(row.artist)}</div>       </div>
-    `;
+var html = rows.map(function (row) {
+return (
+'<div class="year-card">' +
+'<div class="year-header">' +
+'<div>When you were ' + row.age + '</div>' +
+'<div class="year">' + row.year + '</div>' +
+'</div>' +
+'<div>' + escapeHtml(row.title) + '</div>' +
+'<div class="artist">' + escapeHtml(row.artist) + '</div>' +
+'</div>'
+);
 }).join("");
 
 yearlyResult.innerHTML = html;
 }
 
+// Main submit function
 async function submit() {
-const birthday = birthdayInput.value;
+var birthday = birthdayInput.value;
 if (!birthday) return;
 
 goButton.disabled = true;
 goButton.textContent = "Loading...";
 
 try {
-const res = await fetch(`/api/birthday?date=${birthday}`);
-const data = await res.json();
+var res = await fetch("/api/birthday?date=" + encodeURIComponent(birthday));
+var data = await res.json();
 
 ```
-if (!res.ok) throw new Error("Error");
+if (!res.ok) {
+  throw new Error(data.error || "Error loading data");
+}
 
 rangeNote.textContent =
-  `Available: ${data.range.minFormatted} - ${data.range.maxFormatted}`;
+  "Available: " + data.range.minFormatted + " - " + data.range.maxFormatted;
 
 renderBirthSong(data);
 renderYearlySongs(data.yearly);
@@ -61,14 +77,16 @@ renderYearlySongs(data.yearly);
 
 } catch (err) {
 birthResult.innerHTML = "Error loading data";
-}
-
+yearlyResult.innerHTML = "";
+} finally {
 goButton.disabled = false;
 goButton.textContent = "Find my songs";
 }
+}
 
+// Events
 goButton.addEventListener("click", submit);
 
-birthdayInput.addEventListener("keydown", function(e) {
+birthdayInput.addEventListener("keydown", function (e) {
 if (e.key === "Enter") submit();
 });
