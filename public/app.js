@@ -5,12 +5,12 @@ const birthResult = document.getElementById("birthResult");
 const yearlyResult = document.getElementById("yearlyResult");
 
 function escapeHtml(str) {
-return String(str)
-.replaceAll("&", "&")
-.replaceAll("<", "<")
-.replaceAll(">", ">")
-.replaceAll('"', """)
-.replaceAll("'", "'");
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function renderBirthSong(data) {
