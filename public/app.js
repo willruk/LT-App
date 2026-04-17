@@ -14,12 +14,19 @@ function escapeHtml(str) {
 }
 
 function renderBirthSong(data) {
-const blurb = data.birthSong.blurb
-? escapeHtml(data.birthSong.blurb)
-: "No database blurb available.";
+  const blurb = data.birthSong.blurb
+    ? escapeHtml(data.birthSong.blurb)
+    : "No database blurb available.";
 
-birthResult.innerHTML = `     <div class="song-hero">${escapeHtml(data.birthSong.title)}</div>     <div class="artist">${escapeHtml(data.birthSong.artist)}</div>     <div class="note">
-      No.1 from ${escapeHtml(data.birthSong.startDateFormatted)}     </div>     <div class="note" style="margin-top:10px">${blurb}</div>
+  birthResult.innerHTML = `
+    <div class="song-hero">${escapeHtml(data.birthSong.title)}</div>
+    <div class="artist">${escapeHtml(data.birthSong.artist)}</div>
+    <div class="note">
+      No.1 from ${escapeHtml(data.birthSong.startDateFormatted)}
+    </div>
+    <div class="note" style="margin-top:10px">
+      ${blurb}
+    </div>
   `;
 }
 
