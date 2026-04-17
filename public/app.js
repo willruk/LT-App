@@ -5,57 +5,37 @@ const birthResult = document.getElementById("birthResult");
 const yearlyResult = document.getElementById("yearlyResult");
 
 function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+return String(str)
+.replace(/&/g, "&")
+.replace(/</g, "<")
+.replace(/>/g, ">")
+.replace(/"/g, """)
+.replace(/'/g, "'");
 }
 
 function renderBirthSong(data) {
-  const blurb = data.birthSong.blurb
-    ? escapeHtml(data.birthSong.blurb)
-    : "No database blurb available.";
+const blurb = data.birthSong.blurb
+? escapeHtml(data.birthSong.blurb)
+: "No database blurb available.";
 
-  birthResult.innerHTML = `
-    <div class="song-hero">${escapeHtml(data.birthSong.title)}</div>
-    <div class="artist">${escapeHtml(data.birthSong.artist)}</div>
-    <div class="note">
-      No.1 from ${escapeHtml(data.birthSong.startDateFormatted)}
-    </div>
-    <div class="note" style="margin-top:10px">
-      ${blurb}
-    </div>
+birthResult.innerHTML = `     <div class="song-hero">${escapeHtml(data.birthSong.title)}</div>     <div class="artist">${escapeHtml(data.birthSong.artist)}</div>     <div class="note">
+      No.1 from ${escapeHtml(data.birthSong.startDateFormatted)}     </div>     <div class="note" style="margin-top:10px">
+      ${blurb}     </div>
   `;
 }
 
 function renderYearlySongs(rows) {
-  if (!rows.length) {
-    yearlyResult.innerHTML = "No matches found.";
-    return;
-  }
-
-  const html = rows.map(row => {
-    return `
-      <div class="year-card">
-        <div class="year-header">
-          <div>When you were ${row.age}</div>
-          <div class="year">${row.year}</div>
-        </div>
-        <div>${escapeHtml(row.title)}</div>
-        <div class="artist">${escapeHtml(row.artist)}</div>
-      </div>
-    `;
-  }).join("");
-
-  yearlyResult.innerHTML = html;
-};
+if (!rows.length) {
+yearlyResult.innerHTML = "No matches found.";
 return;
 }
 
-yearlyResult.innerHTML = rows.map(row => `     <div class="year-card">       <div class="year-header">         <div>When you were ${row.age}</div>         <div class="year">${row.year}</div>       </div>       <div>${escapeHtml(row.title)}</div>       <div class="artist">${escapeHtml(row.artist)}</div>     </div>
-  `).join("");
+const html = rows.map(function(row) {
+return `       <div class="year-card">         <div class="year-header">           <div>When you were ${row.age}</div>           <div class="year">${row.year}</div>         </div>         <div>${escapeHtml(row.title)}</div>         <div class="artist">${escapeHtml(row.artist)}</div>       </div>
+    `;
+}).join("");
+
+yearlyResult.innerHTML = html;
 }
 
 async function submit() {
@@ -88,6 +68,7 @@ goButton.textContent = "Find my songs";
 }
 
 goButton.addEventListener("click", submit);
-birthdayInput.addEventListener("keydown", e => {
+
+birthdayInput.addEventListener("keydown", function(e) {
 if (e.key === "Enter") submit();
 });
