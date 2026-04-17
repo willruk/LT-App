@@ -24,8 +24,26 @@ birthResult.innerHTML = `     <div class="song-hero">${escapeHtml(data.birthSong
 }
 
 function renderYearlySongs(rows) {
-if (!rows.length) {
-yearlyResult.innerHTML = "No matches found.";
+  if (!rows.length) {
+    yearlyResult.innerHTML = "No matches found.";
+    return;
+  }
+
+  const html = rows.map(row => {
+    return `
+      <div class="year-card">
+        <div class="year-header">
+          <div>When you were ${row.age}</div>
+          <div class="year">${row.year}</div>
+        </div>
+        <div>${escapeHtml(row.title)}</div>
+        <div class="artist">${escapeHtml(row.artist)}</div>
+      </div>
+    `;
+  }).join("");
+
+  yearlyResult.innerHTML = html;
+};
 return;
 }
 
