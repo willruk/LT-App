@@ -70,7 +70,7 @@
     }
     
     .footer {
-  margin-top: 30px;
+  margin-top: 10px;
   text-align: center;
   font-size: 0.8rem;
   color: rgba(181, 189, 212, 0.6);
@@ -146,22 +146,23 @@
     }
 
     .music-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 14px;
-      border-radius: 12px;
-      text-decoration: none;
-      color: white;
-      font-weight: 700;
-      font-size: 0.92rem;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: linear-gradient(90deg, rgba(42,155,255,0.9), rgba(106,61,255,0.9));
-    }
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: white;
+  font-weight: 700;
+  font-size: 0.92rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: #1db954;
+}
 
-    .music-link.apple {
-      background: linear-gradient(90deg, rgba(255,59,226,0.9), rgba(255,138,61,0.9));
-    }
+.music-link.apple {
+  background: #ff2a4b;
+}
 
     .year-card {
       border-top: 1px solid #1f2a44;
@@ -280,7 +281,7 @@
       background: linear-gradient(90deg, #cbd5e1, #94a3b8 58%, #64748b);
       border-radius: 999px;
       transform-origin: 92% 50%;
-      transform: rotate(42deg);
+      transform: rotate(52deg);
       box-shadow: 0 2px 10px rgba(0,0,0,.28);
       z-index: 4;
       animation: tonearm-drop 0.9s ease-out forwards;
@@ -335,8 +336,8 @@
     }
 
     @keyframes tonearm-drop {
-      from { transform: rotate(42deg); }
-      to { transform: rotate(28deg); }
+      from { transform: rotate(52deg); }
+      to { transform: rotate(-8deg); }
     }
 
     @media (min-width: 860px) {
@@ -366,14 +367,14 @@
     <div id="entryCard" class="card">
       <label for="birthday">Your birthday</label>
       <input id="birthday" type="date">
-      <button id="go">Find my songs</button>
+      <button id="go">Find My Songs</button>
       <p id="rangeNote" class="note"></p>
     </div>
 
     <div id="resultsSection" class="hidden">
       <div class="grid">
         <div class="card">
-          <h2 class="accent-heading">Number one on your birthdate</h2>
+          <h2 class="accent-heading">Number one on the day you were born</h2>
           <div id="birthResult" class="note"></div>
         </div>
       </div>
