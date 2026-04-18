@@ -120,7 +120,12 @@ async function getSongForDate(targetDate) {
     LIMIT 1
   `;
 
-  const { rows } = await pool.query(sql, [toIsoDate(targetDate)]);
+  const isoDate = toIsoDate(targetDate);
+  console.log("getSongForDate target:", isoDate);
+
+  const { rows } = await pool.query(sql, [isoDate]);
+  console.log("getSongForDate result:", rows[0]);
+
   return rows[0] || null;
 }
 
@@ -404,6 +409,8 @@ app.get("/api/health", async (_req, res) => {
 app.get("/api/birthday", async (req, res) => {
   try {
     const birthday = parseBirthday(String(req.query.date || ""));
+    console.log("Raw birthday query:", req.query.date);
+console.log("Parsed birthday ISO:", birthday ? toIsoDate(birthday) : null);
     if (!birthday) {
       return res.status(400).json({
         error: "Please provide a valid date in YYYY-MM-DD format."
