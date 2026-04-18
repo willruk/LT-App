@@ -1,54 +1,524 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Life Tracks</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Life Tracks</title>
 
-<style>
-.wrap.results-active label {
-  opacity:0;
-  max-height:0;
-  transition:0.3s;
-}
+  <style>
+    :root {
+      --blue: #2A9BFF;
+      --pink: #FF3BE2;
+      --red: #FF2A4B;
+      --orange: #FF8A3D;
+      --purple: #6A3DFF;
 
-.entry-controls {
-  display:flex;
-  gap:10px;
-}
+      --bg: #060915;
+      --panel: rgba(16, 21, 37, 0.9);
+      --text: #edf2ff;
+      --muted: #b5bdd4;
+      --border: rgba(106, 61, 255, 0.2);
+      --spotify: #1DB954;
+      --apple: #FF2A4B;
+    }
 
-.wrap.results-active input {
-  height:40px;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-.wrap.results-active button {
-  height:40px;
-}
-</style>
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #040611, #090d1d);
+      color: var(--text);
+    }
 
+    .wrap {
+      padding: 4px 14px 40px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .hero-logo {
+      width: 90%;
+      max-width: 620px;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      animation: logoFade 0.8s ease;
+      filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.4));
+      transition: width 0.45s ease, max-width 0.45s ease, transform 0.45s ease;
+    }
+
+    .wrap.results-active .hero-logo {
+      width: 54%;
+      max-width: 372px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-top: 0;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .grid {
+      display: block;
+      transition: all 0.35s ease;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    #entryCard {
+      transition: all 0.35s ease;
+    }
+
+    .wrap.results-active #entryCard {
+      padding: 10px 12px;
+    }
+
+    .entry-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .entry-controls input {
+      flex: 1;
+      margin: 0;
+    }
+
+    .entry-controls button {
+      width: auto;
+      margin: 0;
+      padding: 12px 18px;
+      white-space: nowrap;
+    }
+
+    .wrap.results-active #entryCard label {
+      opacity: 0;
+      max-height: 0;
+      margin-bottom: 0;
+      transform: translateY(-4px);
+      pointer-events: none;
+    }
+
+    .wrap.results-active #entryCard input {
+      padding: 10px 14px;
+      min-height: 44px;
+    }
+
+    .wrap.results-active #entryCard button {
+      padding: 10px 18px;
+      min-height: 44px;
+    }
+
+    #birthCard {
+      display: none;
+      opacity: 0;
+      transform: translateY(14px);
+    }
+
+    .wrap.results-active #birthCard {
+      display: block;
+      animation: cardReveal 0.45s ease forwards;
+    }
+
+    label {
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 6px;
+      transition: opacity 0.22s ease, max-height 0.22s ease, margin-bottom 0.22s ease, transform 0.22s ease;
+      overflow: hidden;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      min-height: 52px;
+      border-radius: 12px;
+      border: 1px solid #1f2a44;
+      background: #0a1020;
+      color: white;
+      font-size: 1rem;
+      transition: padding 0.28s ease, min-height 0.28s ease, border-radius 0.28s ease;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px;
+      min-height: 52px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 800;
+      font-size: 1rem;
+      background: linear-gradient(90deg, var(--blue), var(--pink), var(--orange));
+      color: white;
+      cursor: pointer;
+      transition: padding 0.28s ease, min-height 0.28s ease, border-radius 0.28s ease, opacity 0.2s ease;
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: wait;
+    }
+
+    .accent-heading {
+      color: var(--blue);
+      font-weight: 800;
+      margin-bottom: 10px;
+      font-size: 1.05rem;
+      line-height: 1.3;
+    }
+
+    .song-hero {
+      color: var(--pink);
+      font-weight: 900;
+      font-size: 1.4rem;
+      line-height: 1.2;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .artist {
+      color: var(--orange);
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .song-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .music-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: white;
+      font-weight: 700;
+      font-size: 0.92rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .music-link.spotify {
+      background: var(--spotify);
+    }
+
+    .music-link.apple {
+      background: var(--apple);
+    }
+
+    .spotify-embed {
+      margin-top: 14px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0a1020;
+      border: 1px solid #1f2a44;
+    }
+
+    .spotify-embed iframe {
+      display: block;
+      width: 100%;
+      min-height: 152px;
+      border: 0;
+    }
+
+    .year-card {
+      border-top: 1px solid #1f2a44;
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+
+    .year-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      gap: 10px;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    .year-header .age {
+      text-align: left;
+    }
+
+    .year {
+      color: var(--blue);
+      text-align: right;
+    }
+
+    .song-title {
+      color: var(--pink);
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .footer {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: rgba(181, 189, 212, 0.6);
+    }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 18px;
+      background: rgba(2, 6, 23, 0.84);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.45s ease;
+    }
+
+    .loading-overlay.active {
+      display: flex;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .turntable {
+      position: relative;
+      width: min(72vw, 360px);
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+    }
+
+    .vinyl {
+      position: relative;
+      width: min(54vw, 260px);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 28%, rgba(255,255,255,.18), transparent 0 18%, transparent 19%),
+        radial-gradient(circle at center, #0a0f1c 0 9%, #bcc7d6 9% 10.2%, #101827 10.2% 18%, transparent 18.1%),
+        repeating-radial-gradient(circle at center,
+          rgba(255,255,255,.055) 0 1px,
+          rgba(6,10,18,.96) 1px 5px,
+          rgba(19,26,39,.98) 5px 8px,
+          rgba(6,10,18,.98) 8px 11px);
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.04),
+        inset 0 0 24px rgba(255,255,255,0.05),
+        0 0 0 14px rgba(15, 23, 42, 0.52),
+        0 22px 60px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      animation: spin-vinyl 1.5s linear infinite;
+    }
+
+    .vinyl::before {
+      content: "";
+      position: absolute;
+      inset: 29%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 38% 35%, rgba(255,255,255,.28), transparent 0 16%, transparent 17%),
+        radial-gradient(circle at center, #eff6ff 0 10%, var(--blue) 10% 36%, var(--pink) 36% 62%, var(--purple) 62% 100%);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.12);
+    }
+
+    .vinyl::after {
+      content: "";
+      position: absolute;
+      inset: 47.8%;
+      border-radius: 50%;
+      background: #f8fafc;
+      box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.22);
+      z-index: 2;
+    }
+
+    .vinyl-shine {
+      position: absolute;
+      inset: 9%;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,0) 34%);
+      filter: blur(1px);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .tonearm {
+      position: absolute;
+      right: 12%;
+      top: 10%;
+      width: 132px;
+      height: 12px;
+      background: linear-gradient(90deg, #cbd5e1, #94a3b8 58%, #64748b);
+      border-radius: 999px;
+      transform-origin: 92% 50%;
+      transform: rotate(52deg);
+      box-shadow: 0 2px 10px rgba(0,0,0,.28);
+      z-index: 4;
+      animation: tonearm-drop 1.8s ease-out forwards;
+    }
+
+    .tonearm::before {
+      content: "";
+      position: absolute;
+      right: -10px;
+      top: -7px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #e2e8f0, #64748b 72%);
+      box-shadow: 0 0 0 6px rgba(51,65,85,.45);
+    }
+
+    .tonearm::after {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 2px;
+      width: 18px;
+      height: 8px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #f87171, #e2e8f0);
+      box-shadow: 0 1px 3px rgba(0,0,0,.25);
+    }
+
+    .loading-text {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      letter-spacing: 0.01em;
+      text-shadow: 0 2px 10px rgba(0,0,0,.25);
+    }
+
+    @keyframes logoFade {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes cardReveal {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes spin-vinyl {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes tonearm-drop {
+      from { transform: rotate(52deg); }
+      to { transform: rotate(-8deg); }
+    }
+
+    @media (max-width: 720px) {
+      .entry-controls {
+        flex-direction: column;
+      }
+
+      .entry-controls button {
+        width: 100%;
+      }
+
+      .wrap.results-active .hero-logo {
+        width: 60%;
+        max-width: 360px;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="wrap">
+    <div class="header">
+      <img src="/logo.png" class="hero-logo" alt="Life Tracks logo" />
+    </div>
 
-<div class="wrap">
+    <p class="subtitle">
+      Enter your birthday and discover the soundtrack of your life from the #1 hit the day you were born, and every birthday banger since 🎶
+    </p>
 
-<label>Your birthday</label>
+    <div class="grid">
+      <div class="card" id="entryCard">
+        <label for="birthday">Your birthday</label>
 
-<div class="entry-controls">
-<input id="birthday" type="date">
-<button id="go">Find</button>
-</div>
+        <div class="entry-controls">
+          <input id="birthday" type="date">
+          <button id="go">Find my songs</button>
+        </div>
 
-<div id="birthCard" style="display:none;">
-<div id="birthResult"></div>
-</div>
+        <p id="rangeNote" class="note"></p>
+      </div>
 
-<div id="yearlyCard" style="display:none;">
-<div id="yearlyResult"></div>
-</div>
+      <div class="card" id="birthCard">
+        <h2 class="accent-heading">Number one on the day you were born</h2>
+        <div id="birthResult" class="note"></div>
+      </div>
+    </div>
 
-</div>
+    <div class="card" id="yearlyCard" style="display:none;">
+      <h2 class="accent-heading">Here are the hottest tracks from all of your birthdays</h2>
+      <div id="yearlyResult" class="note"></div>
+    </div>
 
-<script src="/app.js"></script>
+    <footer class="footer">
+      © Lil' Jill Software Inc. 2026
+    </footer>
+  </div>
 
+  <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
+    <div class="turntable" aria-hidden="true">
+      <div class="vinyl"></div>
+      <div class="vinyl-shine"></div>
+      <div class="tonearm"></div>
+    </div>
+    <div class="loading-text">Finding your tracks…</div>
+  </div>
+
+  <script src="/app.js?v=8"></script>
 </body>
 </html>
