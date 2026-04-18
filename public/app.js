@@ -6,9 +6,17 @@ var rangeNote = document.getElementById("rangeNote");
 var birthResult = document.getElementById("birthResult");
 var yearlyResult = document.getElementById("yearlyResult");
 var loadingOverlay = document.getElementById("loadingOverlay");
+var resultsSection = document.getElementById("resultsSection");
+
+function showResults() {
+  if (resultsSection) {
+    resultsSection.classList.remove("hidden");
+  }
+}
 
 function setLoading(isLoading) {
   if (!loadingOverlay) return;
+
   if (isLoading) {
     loadingOverlay.classList.add("active");
     loadingOverlay.setAttribute("aria-hidden", "false");
@@ -64,8 +72,6 @@ function submit() {
   var birthday = birthdayInput.value;
 
   if (!birthday) {
-    birthResult.innerHTML = "Please select a date.";
-    yearlyResult.innerHTML = "";
     return;
   }
 
@@ -73,8 +79,8 @@ function submit() {
   goButton.textContent = "Loading...";
   setLoading(true);
 
-  birthResult.innerHTML = "";
-  yearlyResult.innerHTML = "";
+  var startTime = Date.now();
+  var minimumLoadingTime = 2000;
 
   fetch("/api/birthday?date=" + encodeURIComponent(birthday))
     .then(function(res) {
@@ -84,20 +90,35 @@ function submit() {
       });
     })
     .then(function(data) {
-      rangeNote.textContent =
-        "Available: " + data.range.minFormatted + " - " + data.range.maxFormatted;
+      var elapsed = Date.now() - startTime;
+      var remaining = Math.max(0, minimumLoadingTime - elapsed);
 
-      renderBirthSong(data);
-      renderYearlySongs(data.yearly);
+      setTimeout(function() {
+        rangeNote.textContent =
+          "Available: " + data.range.minFormatted + " - " + data.range.maxFormatted;
+
+        showResults();
+        renderBirthSong(data);
+        renderYearlySongs(data.yearly);
+
+        goButton.disabled = false;
+        goButton.textContent = "Find my songs";
+        setLoading(false);
+      }, remaining);
     })
     .catch(function() {
-      birthResult.innerHTML = "Something went wrong.";
-      yearlyResult.innerHTML = "";
-    })
-    .finally(function() {
-      goButton.disabled = false;
-      goButton.textContent = "Find my songs";
-      setLoading(false);
+      var elapsed = Date.now() - startTime;
+      var remaining = Math.max(0, minimumLoadingTime - elapsed);
+
+      setTimeout(function() {
+        showResults();
+        birthResult.innerHTML = "Something went wrong.";
+        yearlyResult.innerHTML = "";
+
+        goButton.disabled = false;
+        goButton.textContent = "Find my songs";
+        setLoading(false);
+      }, remaining);
     });
 }
 
