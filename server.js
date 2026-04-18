@@ -66,7 +66,7 @@ function parseBirthday(input) {
 function fmtDate(date) {
   return new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
-    month: "long",
+    month: "short",
     year: "numeric",
     timeZone: "UTC"
   }).format(date);
