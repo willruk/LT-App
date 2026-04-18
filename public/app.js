@@ -128,7 +128,7 @@ function submit() {
     .then(function(data) {
       finishAfterMinimum(startTime, function() {
         rangeNote.textContent =
-          "Available: " + data.range.minFormatted + " - " + data.range.maxFormatted;
+          "Available data: " + data.range.minFormatted + " - " + data.range.maxFormatted;
 
         showResults();
         renderBirthSong(data);
