@@ -30,7 +30,7 @@
     }
 
     .wrap {
-      padding: 2px 14px 40px;
+      padding: 4px 14px 40px;
       max-width: 900px;
       margin: auto;
     }
@@ -39,23 +39,25 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
 
     .hero-logo {
-      width: 95%;
-      max-width: 735px;
+      width: 90%;
+      max-width: 520px;
       height: auto;
       object-fit: contain;
       display: block;
       animation: logoFade 0.8s ease;
+      filter: drop-shadow(0 8px 20px rgba(0,0,0,0.4));
     }
 
     .subtitle {
       color: var(--muted);
       font-size: 0.95rem;
       line-height: 1.5;
-      margin-bottom: 10px;
+      margin-top: 0;
+      margin-bottom: 12px;
       text-align: center;
     }
 
@@ -114,12 +116,9 @@
       color: var(--pink);
       font-weight: 900;
       font-size: 1.4rem;
+      line-height: 1.2;
     }
-    
-.year-card > div:not(.year-header):not(.artist) {
-  color: var(--pink);
-  font-weight: 900;
-}
+
     .artist {
       color: var(--orange);
       font-weight: 700;
@@ -132,23 +131,53 @@
       line-height: 1.5;
     }
 
+    .song-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .music-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: white;
+      font-weight: 700;
+      font-size: 0.92rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(90deg, rgba(42,155,255,0.9), rgba(106,61,255,0.9));
+    }
+
+    .music-link.apple {
+      background: linear-gradient(90deg, rgba(255,59,226,0.9), rgba(255,138,61,0.9));
+    }
+
     .year-card {
       border-top: 1px solid #1f2a44;
       padding-top: 10px;
       margin-top: 10px;
     }
 
-.year-header {
-  display: flex;
-  justify-content: space-between;
-  font-weight: 800;
-  gap: 10px;
-  color: var(--blue);
-}
+    .year-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 800;
+      gap: 10px;
+      color: var(--blue);
+    }
 
-.year {
-  color: var(--blue);
-}
+    .year {
+      color: var(--blue);
+    }
+
+    .year-card > div:not(.year-header):not(.artist) {
+      color: var(--pink);
+      font-weight: 900;
+    }
 
     .hidden {
       display: none;
@@ -197,8 +226,8 @@
         inset 0 0 24px rgba(255,255,255,0.05),
         0 0 0 14px rgba(15, 23, 42, 0.52),
         0 22px 60px rgba(0, 0, 0, 0.5);
-      animation: spin-vinyl 1.5s linear infinite;
       overflow: hidden;
+      animation: spin-vinyl 1.5s linear infinite;
     }
 
     .vinyl::before {
@@ -241,9 +270,10 @@
       background: linear-gradient(90deg, #cbd5e1, #94a3b8 58%, #64748b);
       border-radius: 999px;
       transform-origin: 92% 50%;
-      transform: rotate(28deg);
+      transform: rotate(42deg);
       box-shadow: 0 2px 10px rgba(0,0,0,.28);
       z-index: 4;
+      animation: tonearm-drop 0.9s ease-out forwards;
     }
 
     .tonearm::before {
@@ -294,15 +324,20 @@
       to { transform: rotate(360deg); }
     }
 
+    @keyframes tonearm-drop {
+      from { transform: rotate(42deg); }
+      to { transform: rotate(28deg); }
+    }
+
     @media (min-width: 860px) {
       .grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 20px;
       }
 
       .hero-logo {
-        max-width: 910px;
+        max-width: 620px;
       }
     }
   </style>
@@ -321,14 +356,14 @@
     <div id="entryCard" class="card">
       <label for="birthday">Your birthday</label>
       <input id="birthday" type="date">
-      <button id="go">Find My Songs</button>
+      <button id="go">Find my songs</button>
       <p id="rangeNote" class="note"></p>
     </div>
 
     <div id="resultsSection" class="hidden">
       <div class="grid">
         <div class="card">
-          <h2 class="accent-heading">Number one on the day you were born</h2>
+          <h2 class="accent-heading">Number one on your birthdate</h2>
           <div id="birthResult" class="note"></div>
         </div>
       </div>
@@ -349,6 +384,6 @@
     <div class="loading-text">Finding your tracks…</div>
   </div>
 
-  <script src="/app.js?v=6"></script>
+  <script src="/app.js?v=7"></script>
 </body>
 </html>
