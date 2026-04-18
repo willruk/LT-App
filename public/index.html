@@ -30,7 +30,7 @@
     }
 
     .wrap {
-      padding: 5px 14px 40px;
+      padding: 2px 14px 40px;
       max-width: 900px;
       margin: auto;
     }
@@ -39,7 +39,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .hero-logo {
@@ -55,7 +55,7 @@
       color: var(--muted);
       font-size: 0.95rem;
       line-height: 1.5;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
       text-align: center;
     }
 
@@ -115,7 +115,11 @@
       font-weight: 900;
       font-size: 1.4rem;
     }
-
+    
+.year-card > div:not(.year-header):not(.artist) {
+  color: var(--pink);
+  font-weight: 900;
+}
     .artist {
       color: var(--orange);
       font-weight: 700;
@@ -134,16 +138,17 @@
       margin-top: 10px;
     }
 
-    .year-header {
-      display: flex;
-      justify-content: space-between;
-      font-weight: 800;
-      gap: 10px;
-    }
+.year-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 800;
+  gap: 10px;
+  color: var(--blue);
+}
 
-    .year {
-      color: var(--pink);
-    }
+.year {
+  color: var(--blue);
+}
 
     .hidden {
       display: none;
