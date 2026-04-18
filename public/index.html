@@ -44,10 +44,10 @@
     }
 
     .brand-logo {
-      height: 42px;
+      height: 120px;
       width: auto;
       object-fit: contain;
-      animation: brandFadeIn 0.7s ease both;
+      display: block;
     }
 
     .app-icon {
@@ -56,7 +56,7 @@
       border-radius: 12px;
       object-fit: cover;
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
-      animation: iconFloatIn 0.7s ease both;
+      flex: 0 0 auto;
     }
 
     .subtitle {
@@ -152,26 +152,10 @@
       color: var(--pink);
     }
 
-    @keyframes brandFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(6px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes iconFloatIn {
-      from {
-        opacity: 0;
-        transform: translateY(6px) scale(0.96);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: var(--muted);
     }
 
     @media (min-width: 860px) {
@@ -182,7 +166,7 @@
       }
 
       .brand-logo {
-        height: 50px;
+        height: 140px;
       }
 
       .app-icon {
