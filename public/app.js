@@ -1,5 +1,10 @@
 console.log("Life Tracks loaded");
-
+var preSearchSection = document.getElementById("preSearchSection");
+var entryCardResults = document.getElementById("entryCardResults");
+var birthdayInputResults = document.getElementById("birthdayResults");
+var goButtonResults = document.getElementById("goResults");
+var rangeNoteResults = document.getElementById("rangeNoteResults");
+var wrap = document.querySelector(".wrap");
 var birthdayInput = document.getElementById("birthday");
 var goButton = document.getElementById("go");
 var rangeNote = document.getElementById("rangeNote");
@@ -9,8 +14,20 @@ var loadingOverlay = document.getElementById("loadingOverlay");
 var resultsSection = document.getElementById("resultsSection");
 
 function showResults() {
+  if (preSearchSection) {
+    preSearchSection.classList.add("hidden");
+  }
+
   if (resultsSection) {
     resultsSection.classList.remove("hidden");
+  }
+
+  if (wrap) {
+    wrap.classList.add("results-active");
+  }
+
+  if (birthdayInputResults && birthdayInput) {
+    birthdayInputResults.value = birthdayInput.value;
   }
 }
 
@@ -69,14 +86,14 @@ function renderYearlySongs(rows) {
     var row = rows[i];
 
     html +=
-      "<div class='year-card'>" +
-        "<div class='year-header'>" +
-          "<div>When you were " + row.age + "</div>" +
-          "<div class='year'>" + row.year + "</div>" +
-        "</div>" +
-        "<div>" + row.title + "</div>" +
-        "<div class='artist'>" + row.artist + "</div>" +
-      "</div>";
+  "<div class='year-card'>" +
+    "<div class='year-header'>" +
+      "<div class='age'>When you were " + row.age + "</div>" +
+      "<div class='year'>" + row.year + "</div>" +
+    "</div>" +
+    "<div class='song-title'>" + row.title + "</div>" +
+    "<div class='artist'>" + row.artist + "</div>" +
+  "</div>";
   }
 
   yearlyResult.innerHTML = html;
@@ -111,14 +128,22 @@ function submit() {
       });
     })
     .then(function(data) {
-      finishAfterMinimum(startTime, function() {
-        rangeNote.textContent =
-          "Available data: " + data.range.minFormatted + " - " + data.range.maxFormatted;
+  finishAfterMinimum(startTime, function() {
 
-        showResults();
-        renderBirthSong(data);
-        renderYearlySongs(data.yearly);
+    var rangeText =
+      "Available data: " + data.range.minFormatted + " - " + data.range.maxFormatted;
 
+    if (rangeNote) {
+      rangeNote.textContent = rangeText;
+    }
+
+    if (rangeNoteResults) {
+      rangeNoteResults.textContent = rangeText;
+    }
+
+    showResults();
+    renderBirthSong(data);
+    renderYearlySongs(data.yearly);
         goButton.disabled = false;
         goButton.textContent = "Find my songs";
         setLoading(false);
@@ -142,3 +167,33 @@ goButton.addEventListener("click", submit);
 birthdayInput.addEventListener("keydown", function(e) {
   if (e.key === "Enter") submit();
 });
+
+if (goButtonResults) {
+  goButtonResults.addEventListener("click", function() {
+    if (birthdayInputResults && birthdayInput) {
+      birthdayInput.value = birthdayInputResults.value;
+    }
+    submit();
+  });
+}
+
+if (birthdayInputResults) {
+  birthdayInputResults.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      if (birthdayInput) {
+        birthdayInput.value = birthdayInputResults.value;
+      }
+      submit();
+    }
+  });
+}
+
+if (birthdayInput && birthdayInputResults) {
+  birthdayInput.addEventListener("input", function() {
+    birthdayInputResults.value = birthdayInput.value;
+  });
+
+  birthdayInputResults.addEventListener("input", function() {
+    birthdayInput.value = birthdayInputResults.value;
+  });
+}
