@@ -5,6 +5,18 @@ var goButton = document.getElementById("go");
 var rangeNote = document.getElementById("rangeNote");
 var birthResult = document.getElementById("birthResult");
 var yearlyResult = document.getElementById("yearlyResult");
+var loadingOverlay = document.getElementById("loadingOverlay");
+
+function setLoading(isLoading) {
+  if (!loadingOverlay) return;
+  if (isLoading) {
+    loadingOverlay.classList.add("active");
+    loadingOverlay.setAttribute("aria-hidden", "false");
+  } else {
+    loadingOverlay.classList.remove("active");
+    loadingOverlay.setAttribute("aria-hidden", "true");
+  }
+}
 
 function renderBirthSong(data) {
   if (!data || !data.birthSong) {
@@ -59,8 +71,9 @@ function submit() {
 
   goButton.disabled = true;
   goButton.textContent = "Loading...";
+  setLoading(true);
 
-  birthResult.innerHTML = "Loading...";
+  birthResult.innerHTML = "";
   yearlyResult.innerHTML = "";
 
   fetch("/api/birthday?date=" + encodeURIComponent(birthday))
@@ -84,6 +97,7 @@ function submit() {
     .finally(function() {
       goButton.disabled = false;
       goButton.textContent = "Find my songs";
+      setLoading(false);
     });
 }
 
