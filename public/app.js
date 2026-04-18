@@ -6,13 +6,6 @@ var rangeNote = document.getElementById("rangeNote");
 var birthResult = document.getElementById("birthResult");
 var yearlyResult = document.getElementById("yearlyResult");
 
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
-
 function renderBirthSong(data) {
   if (!data || !data.birthSong) {
     birthResult.innerHTML = "No data found.";
