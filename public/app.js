@@ -39,7 +39,7 @@ function renderBirthSong(data) {
   birthResult.innerHTML =
     "<div class='song-hero'>" + data.birthSong.title + "</div>" +
     "<div class='artist'>" + data.birthSong.artist + "</div>" +
-    "<div class='note'>No.1 from " + data.birthSong.startDateFormatted + "</div>" +
+    "<div class='note'>Became No.1 on " + data.birthSong.startDateFormatted + "</div>" +
     "<div class='note' style='margin-top:10px'>" + blurb + "</div>";
 }
 
