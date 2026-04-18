@@ -49,12 +49,12 @@ function renderBirthSong(data) {
   birthResult.innerHTML =
     "<div class='song-hero'>" + title + "</div>" +
     "<div class='artist'>" + artist + "</div>" +
-    "<div class='note'>Became No. 1 on " + data.birthSong.startDateFormatted + "</div>" +
+    "<div class='note'>Reached No. 1 on " + data.birthSong.startDateFormatted + "</div>" +
     "<div class='note' style='margin-top:10px'>" + blurb + "</div>" +
     "<div class='song-actions'>" +
-      "<a class='music-link spotify' href='" + spotifyUrl + "' target='_blank' rel='noopener noreferrer'>Spotify</a>" +
-      "<a class='music-link apple' href='" + appleMusicUrl + "' target='_blank' rel='noopener noreferrer'>Apple Music</a>" +
-    "</div>";
+  "<a class='music-link spotify' href='" + spotifyUrl + "' target='_blank' rel='noopener noreferrer'>ⓢ Listen on Spotify</a>" +
+  "<a class='music-link apple' href='" + appleMusicUrl + "' target='_blank' rel='noopener noreferrer'> Listen on Apple Music</a>" +
+"</div>";
 }
 
 function renderYearlySongs(rows) {
@@ -113,7 +113,7 @@ function submit() {
     .then(function(data) {
       finishAfterMinimum(startTime, function() {
         rangeNote.textContent =
-          "Available: " + data.range.minFormatted + " - " + data.range.maxFormatted;
+          "Available data: " + data.range.minFormatted + " - " + data.range.maxFormatted;
 
         showResults();
         renderBirthSong(data);
