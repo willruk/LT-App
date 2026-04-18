@@ -9,7 +9,7 @@
     :root {
       --blue: #2A9BFF;
       --pink: #FF3BE2;
-      --red: #FF4A65;
+      --red: #FF2A4B;
       --orange: #FF8A3D;
       --purple: #6A3DFF;
 
@@ -18,9 +18,13 @@
       --text: #edf2ff;
       --muted: #b5bdd4;
       --border: rgba(106, 61, 255, 0.2);
+      --spotify: #1DB954;
+      --apple: #FF2A4B;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -44,13 +48,18 @@
 
     .hero-logo {
       width: 90%;
-      max-width: 520px;
+      max-width: 620px;
       height: auto;
       object-fit: contain;
       display: block;
       animation: logoFade 0.8s ease;
-      filter: drop-shadow(0 8px 20px rgba(0,0,0,0.4));
-      transition: width 0.35s ease, max-width 0.35s ease;
+      filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.4));
+      transition: width 0.45s ease, max-width 0.45s ease, transform 0.45s ease;
+    }
+
+    .wrap.results-active .hero-logo {
+      width: 54%;
+      max-width: 372px;
     }
 
     .subtitle {
@@ -62,9 +71,17 @@
       text-align: center;
     }
 
-    #preSearchSection.hidden {
-  display: none;
-}
+    .grid {
+      display: block;
+      transition: all 0.35s ease;
+    }
+
+    .wrap.results-active .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
 
     .card {
       background: var(--panel);
@@ -74,17 +91,24 @@
       margin-top: 14px;
     }
 
-    .wrap.results-active .hero-logo {
-  width: 54%;
-  max-width: 372px;
-}
-    
-    .footer {
-  margin-top: 10px;
-  text-align: center;
-  font-size: 0.8rem;
-  color: rgba(181, 189, 212, 0.6);
-}
+    #entryCard {
+      transition: transform 0.35s ease, opacity 0.35s ease;
+    }
+
+    .wrap.results-active #entryCard {
+      animation: cardSlideIn 0.4s ease;
+    }
+
+    #birthCard {
+      display: none;
+      opacity: 0;
+      transform: translateY(14px);
+    }
+
+    .wrap.results-active #birthCard {
+      display: block;
+      animation: cardReveal 0.45s ease forwards;
+    }
 
     label {
       font-weight: 700;
@@ -134,12 +158,15 @@
       font-weight: 900;
       font-size: 1.4rem;
       line-height: 1.2;
+      text-align: center;
+      margin-bottom: 8px;
     }
 
     .artist {
       color: var(--orange);
       font-weight: 700;
       margin-bottom: 10px;
+      text-align: left;
     }
 
     .note {
@@ -152,69 +179,68 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-top: 12px;
+      margin-top: 14px;
     }
 
     .music-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  text-decoration: none;
-  color: white;
-  font-weight: 700;
-  font-size: 0.92rem;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: #1db954;
-}
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: white;
+      font-weight: 700;
+      font-size: 0.92rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
 
-.music-link.apple {
-  background: #ff2a4b;
-}
+    .music-link.spotify {
+      background: var(--spotify);
+    }
+
+    .music-link.apple {
+      background: var(--apple);
+    }
 
     .year-card {
-  border-top: 1px solid #1f2a44;
-  padding-top: 10px;
-  margin-top: 10px;
-}
+      border-top: 1px solid #1f2a44;
+      padding-top: 10px;
+      margin-top: 10px;
+    }
 
-.year-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 800;
-  gap: 10px;
-  color: var(--blue);
-  margin-bottom: 8px;
-}
+    .year-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      gap: 10px;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
 
-.year-header .age {
-  text-align: left;
-}
+    .year-header .age {
+      text-align: left;
+    }
 
-.year {
-  color: var(--blue);
-  text-align: right;
-}
+    .year {
+      color: var(--blue);
+      text-align: right;
+    }
 
-.year-card .song-title {
-  color: var(--pink);
-  font-weight: 900;
-  text-align: center;
-  margin-bottom: 6px;
-}
+    .song-title {
+      color: var(--pink);
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 6px;
+    }
 
-.year-card .artist {
-  color: var(--orange);
-  font-weight: 700;
-  text-align: left;
-  margin-bottom: 0;
-}
-
-    .hidden {
-      display: none;
+    .footer {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: rgba(181, 189, 212, 0.6);
     }
 
     .loading-overlay {
@@ -228,10 +254,15 @@
       background: rgba(2, 6, 23, 0.84);
       backdrop-filter: blur(8px);
       z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.45s ease;
     }
 
     .loading-overlay.active {
       display: flex;
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .turntable {
@@ -307,7 +338,7 @@
       transform: rotate(52deg);
       box-shadow: 0 2px 10px rgba(0,0,0,.28);
       z-index: 4;
-      animation: tonearm-drop 0.9s ease-out forwards;
+      animation: tonearm-drop 1.8s ease-out forwards;
     }
 
     .tonearm::before {
@@ -338,7 +369,7 @@
       font-size: 1rem;
       font-weight: 700;
       color: #e2e8f0;
-      letter-spacing: .01em;
+      letter-spacing: 0.01em;
       text-shadow: 0 2px 10px rgba(0,0,0,.25);
     }
 
@@ -353,6 +384,28 @@
       }
     }
 
+    @keyframes cardReveal {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes cardSlideIn {
+      from {
+        opacity: 0.96;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     @keyframes spin-vinyl {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
@@ -363,15 +416,14 @@
       to { transform: rotate(-8deg); }
     }
 
-    @media (min-width: 860px) {
-      .grid {
-        display: grid;
+    @media (max-width: 720px) {
+      .wrap.results-active .grid {
         grid-template-columns: 1fr;
-        gap: 20px;
       }
 
-      .hero-logo {
-        max-width: 620px;
+      .wrap.results-active .hero-logo {
+        width: 60%;
+        max-width: 360px;
       }
     }
   </style>
@@ -387,41 +439,28 @@
       Enter your birthday to discover the number one song on the day you were born, then see every birthday after that.
     </p>
 
-    <div id="preSearchSection">
-  <div id="entryCard" class="card">
-    <label for="birthday">Your birthday</label>
-    <input id="birthday" type="date">
-    <button id="go">Find my songs</button>
-    <p id="rangeNote" class="note"></p>
-  </div>
-</div>
+    <div class="grid">
+      <div class="card" id="entryCard">
+        <label for="birthday">Your birthday</label>
+        <input id="birthday" type="date">
+        <button id="go">Find my songs</button>
+        <p id="rangeNote" class="note"></p>
+      </div>
 
-<div id="resultsSection" class="hidden">
-  <div class="grid">
-    <div class="card" id="entryCardResults">
-      <label for="birthdayResults">Your birthday</label>
-      <input id="birthdayResults" type="date">
-      <button id="goResults">Find my songs</button>
-      <p id="rangeNoteResults" class="note"></p>
-    </div>
-
-    <div class="card">
-      <h2 class="accent-heading">Number one on your birthdate</h2>
-      <div id="birthResult" class="note"></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2 class="accent-heading">Here are the hottest tracks from all of your birthdays</h2>
-    <div id="yearlyResult" class="note"></div>
-  </div>
-</div>
-
-      <div class="card">
-        <h2 class="accent-heading">Here are the hottest tracks from all of your birthdays</h2>
-        <div id="yearlyResult" class="note"></div>
+      <div class="card" id="birthCard">
+        <h2 class="accent-heading">Number one on your birthdate</h2>
+        <div id="birthResult" class="note"></div>
       </div>
     </div>
+
+    <div class="card" id="yearlyCard" style="display:none;">
+      <h2 class="accent-heading">Here are the hottest tracks from all of your birthdays</h2>
+      <div id="yearlyResult" class="note"></div>
+    </div>
+
+    <footer class="footer">
+      © Lil' Jill Software Inc. 2026
+    </footer>
   </div>
 
   <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
@@ -433,9 +472,6 @@
     <div class="loading-text">Finding your tracks…</div>
   </div>
 
-  <script src="/app.js?v=7"></script>
-  <footer class="footer">
-  © Lil' Jill Software Inc. 2026
-</footer>
+  <script src="/app.js?v=8"></script>
 </body>
 </html>
