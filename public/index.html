@@ -49,6 +49,16 @@
       margin-bottom: 4px;
     }
 
+.wrap.results-active #rangeNote {
+  opacity: 0;
+  max-height: 0;
+  margin: 0;
+  overflow: hidden;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: all 0.22s ease;
+}
+    
     .hero-logo {
       width: 90%;
       max-width: 620px;
@@ -211,6 +221,7 @@
       color: var(--muted);
       font-size: 0.9rem;
       line-height: 1.5;
+      transition: all 0.22s ease;
     }
 
     .song-actions {
