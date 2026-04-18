@@ -26,21 +26,35 @@ function setLoading(isLoading) {
   }
 }
 
+function encodeQuery(text) {
+  return encodeURIComponent(text || "");
+}
+
 function renderBirthSong(data) {
   if (!data || !data.birthSong) {
     birthResult.innerHTML = "No data found.";
     return;
   }
 
+  var title = data.birthSong.title || "";
+  var artist = data.birthSong.artist || "";
   var blurb = data.birthSong.blurb
     ? data.birthSong.blurb
     : "No database blurb available.";
 
+  var query = title + " " + artist;
+  var spotifyUrl = "https://open.spotify.com/search/" + encodeQuery(query);
+  var appleMusicUrl = "https://music.apple.com/us/search?term=" + encodeQuery(query);
+
   birthResult.innerHTML =
-    "<div class='song-hero'>" + data.birthSong.title + "</div>" +
-    "<div class='artist'>" + data.birthSong.artist + "</div>" +
-    "<div class='note'>Became No.1 on " + data.birthSong.startDateFormatted + "</div>" +
-    "<div class='note' style='margin-top:10px'>" + blurb + "</div>";
+    "<div class='song-hero'>" + title + "</div>" +
+    "<div class='artist'>" + artist + "</div>" +
+    "<div class='note'>Became No. 1 on " + data.birthSong.startDateFormatted + "</div>" +
+    "<div class='note' style='margin-top:10px'>" + blurb + "</div>" +
+    "<div class='song-actions'>" +
+      "<a class='music-link spotify' href='" + spotifyUrl + "' target='_blank' rel='noopener noreferrer'>Spotify</a>" +
+      "<a class='music-link apple' href='" + appleMusicUrl + "' target='_blank' rel='noopener noreferrer'>Apple Music</a>" +
+    "</div>";
 }
 
 function renderYearlySongs(rows) {
@@ -68,6 +82,14 @@ function renderYearlySongs(rows) {
   yearlyResult.innerHTML = html;
 }
 
+function finishAfterMinimum(startTime, callback) {
+  var minimumLoadingTime = 3000;
+  var elapsed = Date.now() - startTime;
+  var remaining = Math.max(0, minimumLoadingTime - elapsed);
+
+  setTimeout(callback, remaining);
+}
+
 function submit() {
   var birthday = birthdayInput.value;
 
@@ -80,7 +102,6 @@ function submit() {
   setLoading(true);
 
   var startTime = Date.now();
-  var minimumLoadingTime = 2000;
 
   fetch("/api/birthday?date=" + encodeURIComponent(birthday))
     .then(function(res) {
@@ -90,12 +111,9 @@ function submit() {
       });
     })
     .then(function(data) {
-      var elapsed = Date.now() - startTime;
-      var remaining = Math.max(0, minimumLoadingTime - elapsed);
-
-      setTimeout(function() {
+      finishAfterMinimum(startTime, function() {
         rangeNote.textContent =
-          "Available data: " + data.range.minFormatted + " - " + data.range.maxFormatted;
+          "Available: " + data.range.minFormatted + " - " + data.range.maxFormatted;
 
         showResults();
         renderBirthSong(data);
@@ -104,13 +122,10 @@ function submit() {
         goButton.disabled = false;
         goButton.textContent = "Find my songs";
         setLoading(false);
-      }, remaining);
+      });
     })
     .catch(function() {
-      var elapsed = Date.now() - startTime;
-      var remaining = Math.max(0, minimumLoadingTime - elapsed);
-
-      setTimeout(function() {
+      finishAfterMinimum(startTime, function() {
         showResults();
         birthResult.innerHTML = "Something went wrong.";
         yearlyResult.innerHTML = "";
@@ -118,7 +133,7 @@ function submit() {
         goButton.disabled = false;
         goButton.textContent = "Find my songs";
         setLoading(false);
-      }, remaining);
+      });
     });
 }
 
