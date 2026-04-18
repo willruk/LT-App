@@ -7,14 +7,12 @@ const rangeNote = document.getElementById("rangeNote");
 const birthResult = document.getElementById("birthResult");
 const yearlyResult = document.getElementById("yearlyResult");
 
-// Safe HTML escaping
+// HTML escaping (temp solution)
 function escapeHtml(str) {
-return String(str)
-.replace(/&/g, "&")
-.replace(/</g, "<")
-.replace(/>/g, ">")
-.replace(/"/g, """)
-.replace(/'/g, "'");
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
 
 // Render birth song
