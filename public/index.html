@@ -50,6 +50,7 @@
       display: block;
       animation: logoFade 0.8s ease;
       filter: drop-shadow(0 8px 20px rgba(0,0,0,0.4));
+      transition: width 0.35s ease, max-width 0.35s ease;
     }
 
     .subtitle {
@@ -61,6 +62,10 @@
       text-align: center;
     }
 
+    #preSearchSection.hidden {
+  display: none;
+}
+
     .card {
       background: var(--panel);
       border: 1px solid var(--border);
@@ -68,6 +73,11 @@
       padding: 16px;
       margin-top: 14px;
     }
+
+    .wrap.results-active .hero-logo {
+  width: 54%;
+  max-width: 372px;
+}
     
     .footer {
   margin-top: 10px;
@@ -165,30 +175,43 @@
 }
 
     .year-card {
-      border-top: 1px solid #1f2a44;
-      padding-top: 10px;
-      margin-top: 10px;
-    }
-
-    .year-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-  font-weight: 800;
-  gap: 2px;
-  color: var(--blue);
+  border-top: 1px solid #1f2a44;
+  padding-top: 10px;
+  margin-top: 10px;
 }
 
-    .year {
-      color: var(--blue);
-    }
+.year-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 800;
+  gap: 10px;
+  color: var(--blue);
+  margin-bottom: 8px;
+}
 
-    .year-card > div:not(.year-header):not(.artist) {
-      color: var(--pink);
-      font-weight: 900;
-    }
+.year-header .age {
+  text-align: left;
+}
+
+.year {
+  color: var(--blue);
+  text-align: right;
+}
+
+.year-card .song-title {
+  color: var(--pink);
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.year-card .artist {
+  color: var(--orange);
+  font-weight: 700;
+  text-align: left;
+  margin-bottom: 0;
+}
 
     .hidden {
       display: none;
@@ -364,20 +387,35 @@
       Enter your birthday to discover the number one song on the day you were born, then see every birthday after that.
     </p>
 
-    <div id="entryCard" class="card">
-      <label for="birthday">Your birthday</label>
-      <input id="birthday" type="date">
-      <button id="go">Find My Songs</button>
-      <p id="rangeNote" class="note"></p>
+    <div id="preSearchSection">
+  <div id="entryCard" class="card">
+    <label for="birthday">Your birthday</label>
+    <input id="birthday" type="date">
+    <button id="go">Find my songs</button>
+    <p id="rangeNote" class="note"></p>
+  </div>
+</div>
+
+<div id="resultsSection" class="hidden">
+  <div class="grid">
+    <div class="card" id="entryCardResults">
+      <label for="birthdayResults">Your birthday</label>
+      <input id="birthdayResults" type="date">
+      <button id="goResults">Find my songs</button>
+      <p id="rangeNoteResults" class="note"></p>
     </div>
 
-    <div id="resultsSection" class="hidden">
-      <div class="grid">
-        <div class="card">
-          <h2 class="accent-heading">Number one on the day you were born</h2>
-          <div id="birthResult" class="note"></div>
-        </div>
-      </div>
+    <div class="card">
+      <h2 class="accent-heading">Number one on your birthdate</h2>
+      <div id="birthResult" class="note"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="accent-heading">Here are the hottest tracks from all of your birthdays</h2>
+    <div id="yearlyResult" class="note"></div>
+  </div>
+</div>
 
       <div class="card">
         <h2 class="accent-heading">Here are the hottest tracks from all of your birthdays</h2>
