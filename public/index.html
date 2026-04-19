@@ -534,8 +534,10 @@
     0 22px 60px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   animation:
-    vinyl-spin-up 1.35s cubic-bezier(0.28, 0.72, 0.2, 1) 0.55s forwards,
-    spin-vinyl 1.5s linear 1.9s infinite;
+    animation:
+  animation:
+  vinyl-spin-up 2.8s cubic-bezier(0.22, 0.7, 0.2, 1) 0.75s forwards,
+  spin-vinyl 1.5s linear 3.55s infinite;
   will-change: transform;
 }
 
@@ -642,20 +644,28 @@
     transform: translate(-50%, -50%) rotate(0deg);
   }
 
-  12% {
-    transform: translate(-50%, -50%) rotate(4deg);
+  8% {
+    transform: translate(-50%, -50%) rotate(2deg);
   }
 
-  28% {
-    transform: translate(-50%, -50%) rotate(18deg);
+  18% {
+    transform: translate(-50%, -50%) rotate(8deg);
+  }
+
+  32% {
+    transform: translate(-50%, -50%) rotate(22deg);
   }
 
   48% {
-    transform: translate(-50%, -50%) rotate(60deg);
+    transform: translate(-50%, -50%) rotate(55deg);
   }
 
-  72% {
-    transform: translate(-50%, -50%) rotate(170deg);
+  66% {
+    transform: translate(-50%, -50%) rotate(125deg);
+  }
+
+  82% {
+    transform: translate(-50%, -50%) rotate(235deg);
   }
 
   100% {
