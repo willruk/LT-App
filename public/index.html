@@ -517,9 +517,7 @@
   top: 50%;
   width: 260px;
   height: 260px;
-  transform: translate(-50%, -50%) rotate(0deg);
-  will-change: transform;
-  animation: vinyl-startup 2.6s linear forwards;
+  transform: translate(-50%, -50%);
 }
 
 .vinyl {
@@ -541,7 +539,7 @@
     0 22px 60px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   will-change: transform;
-  animation: spin-vinyl 1.5s linear 2.6s infinite;
+  animation: vinyl-motion 6s linear infinite;
 }
 
 .vinyl::before {
@@ -688,39 +686,47 @@
   }
 }
 
-    @keyframes vinyl-startup {
+    @keyframes vinyl-motion {
+  /* pause at start, begins with tonearm */
   0% {
-    transform: translate(-50%, -50%) rotate(0deg);
+    transform: rotate(0deg);
   }
 
-  12% {
-    transform: translate(-50%, -50%) rotate(3deg);
+  10% {
+    transform: rotate(0deg);
   }
 
-  26% {
-    transform: translate(-50%, -50%) rotate(12deg);
+  /* slow initial movement */
+  18% {
+    transform: rotate(4deg);
   }
 
-  44% {
-    transform: translate(-50%, -50%) rotate(32deg);
+  28% {
+    transform: rotate(16deg);
   }
 
-  64% {
-    transform: translate(-50%, -50%) rotate(78deg);
+  40% {
+    transform: rotate(42deg);
   }
 
-  82% {
-    transform: translate(-50%, -50%) rotate(150deg);
+  /* accelerating */
+  55% {
+    transform: rotate(105deg);
   }
 
+  72% {
+    transform: rotate(235deg);
+  }
+
+  /* by here it feels near full speed */
+  86% {
+    transform: rotate(430deg);
+  }
+
+  /* continue through full speed with no handoff */
   100% {
-    transform: translate(-50%, -50%) rotate(240deg);
+    transform: rotate(670deg);
   }
-}
-
-@keyframes spin-vinyl {
-  from { transform: rotate(240deg); }
-  to   { transform: rotate(600deg); }
 }
     
     .loading-text {
