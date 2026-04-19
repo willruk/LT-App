@@ -143,23 +143,63 @@ function renderYearlySongs(rows) {
     return;
   }
 
-  var html = "";
+  var html = "<div class='year-timeline'>";
 
   for (var i = 0; i < rows.length; i++) {
     var row = rows[i];
+    var triviaId = "trivia-" + row.year + "-" + row.age;
+    var albumImageHtml = row.albumImage
+      ? "<img class='year-art' src='" + escapeHtml(row.albumImage) + "' alt='Album art for " + escapeHtml(row.title) + " by " + escapeHtml(row.artist) + "' loading='lazy'>"
+      : "<div class='year-art year-art-placeholder'></div>";
 
     html +=
-      "<div class='year-card'>" +
-        "<div class='year-header'>" +
-          "<div class='age'>When you were " + escapeHtml(row.age) + "</div>" +
-          "<div class='year'>" + escapeHtml(row.year) + "</div>" +
+      "<div class='timeline-row'>" +
+        "<div class='timeline-dot'></div>" +
+        "<div class='year-card year-card-rich'>" +
+          "<div class='year-meta'>" +
+            "<span class='year-label'>" + escapeHtml(row.year) + "</span>" +
+            "<span class='year-sep'>•</span>" +
+            "<span class='age-label'>Age " + escapeHtml(row.age) + "</span>" +
+          "</div>" +
+          "<div class='year-card-body'>" +
+            albumImageHtml +
+            "<div class='year-copy'>" +
+              "<div class='year-song-title'>" + escapeHtml(row.title) + "</div>" +
+              "<div class='year-song-artist'>" + escapeHtml(row.artist) + "</div>" +
+              "<button class='trivia-toggle' type='button' aria-expanded='false' aria-controls='" + escapeHtml(triviaId) + "'>" +
+                "<span>Trivia</span>" +
+                "<span class='trivia-caret'>▾</span>" +
+              "</button>" +
+              "<div class='year-trivia' id='" + escapeHtml(triviaId) + "' hidden>" +
+                escapeHtml(row.blurb || "No trivia available yet.") +
+              "</div>" +
+            "</div>" +
+          "</div>" +
         "</div>" +
-        "<div class='song-title'>" + escapeHtml(row.title) + "</div>" +
-        "<div class='artist'>" + escapeHtml(row.artist) + "</div>" +
       "</div>";
   }
 
+  html += "</div>";
   yearlyResult.innerHTML = html;
+  attachTriviaToggles();
+}
+
+function attachTriviaToggles() {
+  var toggles = yearlyResult.querySelectorAll(".trivia-toggle");
+
+  for (var i = 0; i < toggles.length; i++) {
+    toggles[i].addEventListener("click", function () {
+      var controlsId = this.getAttribute("aria-controls");
+      var panel = document.getElementById(controlsId);
+      var expanded = this.getAttribute("aria-expanded") === "true";
+
+      this.setAttribute("aria-expanded", expanded ? "false" : "true");
+
+      if (panel) {
+        panel.hidden = expanded;
+      }
+    });
+  }
 }
 
 function finishAfterMinimum(startTime, callback) {
