@@ -1,3 +1,4 @@
+console.log("vinyl found:", !!vinyl);
 console.log("Life Tracks loaded");
 
 var birthdayInput = document.getElementById("birthday");
