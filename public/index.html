@@ -534,7 +534,7 @@
     0 22px 60px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   animation: spin-vinyl 1.5s linear infinite;
-  animation-delay: 1.2s;
+  animation-delay: 1.6s;
   animation-fill-mode: backwards;
 }
 
@@ -599,7 +599,7 @@
   transform: rotate(-90deg);
   box-shadow: 0 2px 10px rgba(0,0,0,.28);
   z-index: 4;
-  animation: tonearm-drop 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: tonearm-drop 2.4s ease-out forwards;
 }
 
 .tonearm::before {
@@ -633,8 +633,7 @@
 
 @keyframes tonearm-drop {
   0%   { transform: rotate(-90deg); }
-  78%  { transform: rotate(-58deg); }
-  88%  { transform: rotate(-62deg); }
+  85%  { transform: rotate(-58deg); }
   100% { transform: rotate(-60deg); }
 }
     .loading-text {
