@@ -89,6 +89,99 @@ function buildFallbackArtwork(title, artist) {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
+function buildSpotifySearchUrl(title, artist) {
+  const q = encodeURIComponent(`${title} ${artist}`.trim());
+  return `https://open.spotify.com/search/${q}`;
+}
+
+function buildAppleMusicSearchUrl(title, artist) {
+  const q = encodeURIComponent(`${title} ${artist}`.trim());
+  return `https://music.apple.com/us/search?term=${q}`;
+}
+
+const hasSpotify =
+  Boolean(process.env.SPOTIFY_CLIENT_ID) &&
+  Boolean(process.env.SPOTIFY_CLIENT_SECRET);
+
+let spotifyToken = "";
+let spotifyExpiresAt = 0;
+
+async function getSpotifyToken() {
+  if (!hasSpotify) return null;
+
+  const now = Date.now();
+  if (spotifyToken && now < spotifyExpiresAt - 60000) {
+    return spotifyToken;
+  }
+
+  const auth = Buffer.from(
+    `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
+  ).toString("base64");
+
+  try {
+    const res = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: "grant_type=client_credentials"
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Spotify token request failed:", res.status, text);
+      return null;
+    }
+
+    const data = await res.json();
+    spotifyToken = data.access_token || "";
+    spotifyExpiresAt = now + Number(data.expires_in || 3600) * 1000;
+
+    return spotifyToken || null;
+  } catch (error) {
+    console.error("Spotify token failed:", error);
+    return null;
+  }
+}
+
+async function getSpotifyTrackData(title, artist) {
+  try {
+    const token = await getSpotifyToken();
+    if (!token) return null;
+
+    const query = encodeURIComponent(`${title} ${artist}`.trim());
+
+    const res = await fetch(
+      `https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Spotify search failed:", res.status, text);
+      return null;
+    }
+
+    const data = await res.json();
+    const track = data?.tracks?.items?.[0];
+    if (!track) return null;
+
+    return {
+      albumImage: track.album?.images?.[0]?.url || null,
+      url: track.external_urls?.spotify || buildSpotifySearchUrl(title, artist),
+      embedUrl: track.id ? `https://open.spotify.com/embed/track/${track.id}` : null
+    };
+  } catch (error) {
+    console.error("Spotify search failed:", error);
+    return null;
+  }
+}
+
 async function getDateRange() {
   const { rows } = await pool.query(`
     SELECT
@@ -127,7 +220,7 @@ async function getSongForDate(targetDate) {
 app.get("/api/health", async (_req, res) => {
   try {
     await pool.query("SELECT 1");
-    res.json({ ok: true, stage: "birthday-route-test" });
+    res.json({ ok: true });
   } catch (error) {
     console.error(error);
     res.status(500).json({ ok: false, error: error.message });
@@ -166,6 +259,8 @@ app.get("/api/birthday", async (req, res) => {
       });
     }
 
+    const birthSpotify = await getSpotifyTrackData(birthRow.title, birthRow.artist);
+
     const birthSong = {
       title: birthRow.title,
       artist: birthRow.artist,
@@ -173,7 +268,15 @@ app.get("/api/birthday", async (req, res) => {
       blurbStatus: birthRow.blurb_status || "",
       startDate: toIsoDate(new Date(birthRow.was_number_one_from)),
       startDateFormatted: fmtDate(new Date(birthRow.was_number_one_from)),
-      albumImage: buildFallbackArtwork(birthRow.title, birthRow.artist)
+      albumImage: birthSpotify?.albumImage || buildFallbackArtwork(birthRow.title, birthRow.artist),
+      spotify: birthSpotify
+        ? {
+            url: birthSpotify.url,
+            embedUrl: birthSpotify.embedUrl
+          }
+        : null,
+      spotifyUrl: birthSpotify?.url || buildSpotifySearchUrl(birthRow.title, birthRow.artist),
+      appleMusicUrl: buildAppleMusicSearchUrl(birthRow.title, birthRow.artist)
     };
 
     const month = birthday.getUTCMonth() + 1;
@@ -189,13 +292,17 @@ app.get("/api/birthday", async (req, res) => {
       const row = await getSongForDate(anniv);
       if (!row) continue;
 
+      const spotifyTrack = await getSpotifyTrackData(row.title, row.artist);
+
       yearly.push({
         age: year - birthYear,
         year,
         title: row.title,
         artist: row.artist,
         blurb: row.openai_blurb || "",
-        albumImage: buildFallbackArtwork(row.title, row.artist)
+        albumImage: spotifyTrack?.albumImage || buildFallbackArtwork(row.title, row.artist),
+        spotifyUrl: spotifyTrack?.url || buildSpotifySearchUrl(row.title, row.artist),
+        appleMusicUrl: buildAppleMusicSearchUrl(row.title, row.artist)
       });
     }
 
@@ -224,5 +331,5 @@ app.get("*", (_req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Birthday route test listening on port ${PORT}`);
+  console.log(`Life Tracks listening on port ${PORT}`);
 });
