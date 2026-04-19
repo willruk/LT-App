@@ -174,7 +174,6 @@ app.get("/api/birthday", async (req, res) => {
       blurbStatus: birthRow.blurb_status || "",
       startDate: toIsoDate(new Date(birthRow.was_number_one_from)),
       startDateFormatted: fmtDate(new Date(birthRow.was_number_one_from))
-      albumImage: buildFallbackArtwork(birthRow.title, birthRow.artist),
     };
 
     const month = birthday.getUTCMonth() + 1;
