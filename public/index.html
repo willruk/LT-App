@@ -482,20 +482,21 @@
     }
 
     .loading-overlay {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 18px;
-      background: rgba(2, 6, 23, 0.84);
-      backdrop-filter: blur(8px);
-      z-index: 9999;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.45s ease;
-    }
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 18px;
+  background: rgba(2, 6, 23, 0.84);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+  padding: 24px;
+}
 
     .loading-overlay.active {
       display: flex;
@@ -504,12 +505,13 @@
     }
 
     .turntable {
-      position: relative;
-      width: min(72vw, 360px);
-      aspect-ratio: 1 / 1;
-      display: grid;
-      place-items: center;
-    }
+  position: relative;
+  width: min(72vw, 360px);
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  margin: 0 auto;
+}
 
     .vinyl {
       position: relative;
@@ -582,21 +584,19 @@
     }
 
     .tonearm {
-      position: absolute;
-      right: 10%;
-      top: 6%;
-      width: 132px;
-      height: 12px;
-      background: linear-gradient(90deg, #cbd5e1, #94a3b8 58%, #64748b);
-      border-radius: 999px;
-      transform-origin: 96% 12%;
-      transform: rotate(90deg);
-      box-shadow: 0 2px 10px rgba(0,0,0,.28);
-      z-index: 4;
-      animation:
-        tonearm-drop 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards,
-        tonearm-lower 1.6s ease-out forwards;
-    }
+  position: absolute;
+  right: 8%;
+  top: 7%;
+  width: 132px;
+  height: 12px;
+  background: linear-gradient(90deg, #cbd5e1, #94a3b8 58%, #64748b);
+  border-radius: 999px;
+  transform-origin: 96% 50%;
+  transform: rotate(90deg);
+  box-shadow: 0 2px 10px rgba(0,0,0,.28);
+  z-index: 4;
+  animation: tonearm-drop 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
 
     .tonearm::before {
       content: "";
@@ -658,17 +658,11 @@
     }
 
     @keyframes tonearm-drop {
-      0%   { transform: rotate(90deg); }
-      78%  { transform: rotate(112deg); }
-      88%  { transform: rotate(108deg); }
-      100% { transform: rotate(110deg); }
-    }
-
-    @keyframes tonearm-lower {
-      0%   { margin-top: 0; }
-      72%  { margin-top: 0; }
-      100% { margin-top: 4px; }
-    }
+  0%   { transform: rotate(90deg); }
+  78%  { transform: rotate(122deg); }
+  88%  { transform: rotate(118deg); }
+  100% { transform: rotate(120deg); }
+}
 
     @media (max-width: 720px) {
       .wrap {
@@ -762,8 +756,8 @@
       }
 
       .tonearm {
-        right: 8%;
-        top: 5%;
+        right: 7%;
+        top: 6%;
         width: 118px;
       }
     }
