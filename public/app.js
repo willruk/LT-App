@@ -55,19 +55,19 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
-function buildSearchLinks(title, artist) {
-  function cleanText(str) {
-  return (str || "")
+function cleanText(str) {
+  return String(str || "")
     .replace(/[’‘]/g, "'")
     .replace(/[“”]/g, '"')
     .replace(/\s+/g, " ")
     .trim();
 }
 
-var safeTitle = cleanText(title);
-var safeArtist = cleanText(artist);
+function buildSearchLinks(title, artist) {
+  var safeTitle = cleanText(title);
+  var safeArtist = cleanText(artist);
+  var query = (safeTitle + " " + safeArtist).trim();
 
-var query = safeTitle + " " + safeArtist;
   return {
     spotify: "https://open.spotify.com/search/" + encodeURIComponent(query),
     apple: "https://music.apple.com/us/search?term=" + encodeURIComponent(query)
@@ -170,7 +170,7 @@ function finishAfterMinimum(startTime, callback) {
 }
 
 function submit() {
-  var birthday = birthdayInput.value;
+  var birthday = birthdayInput && birthdayInput.value;
 
   if (!birthday) {
     return;
@@ -228,10 +228,14 @@ function submit() {
     });
 }
 
-goButton.addEventListener("click", submit);
+if (goButton) {
+  goButton.addEventListener("click", submit);
+}
 
-birthdayInput.addEventListener("keydown", function (e) {
-  if (e.key === "Enter") {
-    submit();
-  }
-});
+if (birthdayInput) {
+  birthdayInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      submit();
+    }
+  });
+}
