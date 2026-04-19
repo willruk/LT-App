@@ -21,10 +21,8 @@ var vinylLastTime = 0;
 var vinylAngle = 0;
 var vinylRunning = false;
 
-function easeInOutCubic(t) {
-  return t < 0.5
-    ? 4 * t * t * t
-    : 1 - Math.pow(-2 * t + 2, 3) / 2;
+function easeOutCubic(t) {
+  return 1 - Math.pow(1 - t, 3);
 }
 
 function applyVinylRotation() {
@@ -61,7 +59,7 @@ function startVinylAnimation() {
 
   var initialPauseMs = 100;      // starts almost with tonearm
   var rampDurationMs = 2600;     // time to reach full speed
-  var fullSpeedDegPerSec = 240;  // tune this for top speed
+  var fullSpeedDegPerSec = 220;  // tune this for top speed
 
   function frame(now) {
     if (!vinylRunning) return;
@@ -81,7 +79,7 @@ function startVinylAnimation() {
       speedDegPerSec = 0;
     } else if (elapsed <= initialPauseMs + rampDurationMs) {
       var t = (elapsed - initialPauseMs) / rampDurationMs;
-      var eased = easeInOutCubic(t);
+      var eased = easeOutCubic(t);
       speedDegPerSec = fullSpeedDegPerSec * eased;
     } else {
       speedDegPerSec = fullSpeedDegPerSec;
@@ -108,15 +106,17 @@ function setLoading(isLoading) {
       loadingOverlay.setAttribute("aria-hidden", "false");
     });
   } else {
-    loadingOverlay.classList.remove("active");
-    loadingOverlay.setAttribute("aria-hidden", "true");
-
     setTimeout(function () {
-      if (!loadingOverlay.classList.contains("active")) {
-        loadingOverlay.style.display = "none";
-        stopVinylAnimation();
-      }
-    }, 450);
+  loadingOverlay.classList.remove("active");
+  loadingOverlay.setAttribute("aria-hidden", "true");
+
+  setTimeout(function () {
+    if (!loadingOverlay.classList.contains("active")) {
+      loadingOverlay.style.display = "none";
+      stopVinylAnimation();
+    }
+  }, 600);
+}, 700);
   }
 }
 
