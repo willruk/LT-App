@@ -70,23 +70,23 @@ function escapeSvgText(value) {
 function buildFallbackArtwork(title, artist) {
   const safeTitle = escapeSvgText(title).slice(0, 28);
   const safeArtist = escapeSvgText(artist).slice(0, 32);
-  
-}
+
   const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="640" height="640">
-      <rect width="100%" height="100%" fill="#0b0b0f"/>
-      <circle cx="320" cy="320" r="240" fill="#111"/>
+    <svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640">
+      <rect width="640" height="640" rx="36" fill="#0b0b0f"/>
+      <circle cx="320" cy="320" r="240" fill="#111217"/>
+      <circle cx="320" cy="320" r="200" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
+      <circle cx="320" cy="320" r="165" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="2"/>
+      <circle cx="320" cy="320" r="130" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="2"/>
       <circle cx="320" cy="320" r="100" fill="#ff3be2"/>
-      <text x="320" y="300" text-anchor="middle" fill="#111">${safeTitle}</text>
-      <text x="320" y="330" text-anchor="middle" fill="#111">${safeArtist}</text>
+      <circle cx="320" cy="320" r="16" fill="#f5f5f5"/>
+      <text x="320" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#111">${safeTitle}</text>
+      <text x="320" y="325" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#111">${safeArtist}</text>
+      <text x="320" y="352" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#222">LIFE TRACKS</text>
     </svg>
   `;
 
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-}
-  const d = new Date(Date.UTC(year, month - 1, day));
-  if (d.getUTCMonth() !== month - 1 || d.getUTCDate() !== day) return null;
-  return d;
 }
 
 async function getDateRange() {
@@ -172,7 +172,8 @@ app.get("/api/birthday", async (req, res) => {
       blurb: birthRow.openai_blurb || "",
       blurbStatus: birthRow.blurb_status || "",
       startDate: toIsoDate(new Date(birthRow.was_number_one_from)),
-      startDateFormatted: fmtDate(new Date(birthRow.was_number_one_from))
+      startDateFormatted: fmtDate(new Date(birthRow.was_number_one_from)),
+      albumImage: buildFallbackArtwork(birthRow.title, birthRow.artist)
     };
 
     const month = birthday.getUTCMonth() + 1;
