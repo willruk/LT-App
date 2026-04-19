@@ -13,194 +13,93 @@ var vinyl = document.querySelector(".vinyl");
 var vinylStartupAnimation = null;
 var vinylContinuousAnimation = null;
 
-function getCurrentRotationDegrees(el) {
-  var style = window.getComputedStyle(el);
-  var transform = style.transform || style.webkitTransform || "none";
+var vinyl = document.querySelector(".vinyl");
+var vinylRafId = null;
+var vinylStartTime = 0;
+var vinylLastTime = 0;
+var vinylAngle = 0;
+var vinylRunning = false;
 
-  if (!transform || transform === "none") return 0;
-
-  var values = transform.match(/matrix\(([^)]+)\)/);
-  if (!values) return 0;
-
-  var parts = values[1].split(",");
-  var a = parseFloat(parts[0]);
-  var b = parseFloat(parts[1]);
-
-  var angle = Math.round(Math.atan2(b, a) * (180 / Math.PI));
-  return angle;
+function easeInOutCubic(t) {
+  return t < 0.5
+    ? 4 * t * t * t
+    : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
-function startVinylStartup() {
+function applyVinylRotation() {
   if (!vinyl) return;
-
-  vinyl.style.animation = "none";
-  vinyl.style.transform = "rotate(0deg)";
-  void vinyl.offsetWidth;
-
-  vinyl.animate(
-    [
-      { transform: "rotate(0deg)", offset: 0 },
-      { transform: "rotate(0deg)", offset: 0.03 },
-      { transform: "rotate(3deg)", offset: 0.08 },
-      { transform: "rotate(12deg)", offset: 0.14 },
-      { transform: "rotate(32deg)", offset: 0.22 },
-      { transform: "rotate(72deg)", offset: 0.32 },
-      { transform: "rotate(150deg)", offset: 0.46 },
-      { transform: "rotate(270deg)", offset: 0.60 },
-      { transform: "rotate(430deg)", offset: 0.76 },
-      { transform: "rotate(540deg)", offset: 1 }
-    ],
-    {
-      duration: 3200,
-      easing: "linear",
-      fill: "forwards"
-    }
-  );
-
-  clearTimeout(vinylStartupTimeout);
-  vinylStartupTimeout = setTimeout(function () {
-    startVinylContinuous();
-  }, 3200);
-}
-
-function startVinylContinuous() {
-  if (!vinyl) return;
-
-  var currentAngle = getCurrentRotationDegrees(vinyl);
-
-  vinyl.style.animation = "none";
-  vinyl.style.transform = "rotate(" + currentAngle + "deg)";
-  void vinyl.offsetWidth;
-
-  vinyl.animate(
-    [
-      { transform: "rotate(" + currentAngle + "deg)" },
-      { transform: "rotate(" + (currentAngle + 360) + "deg)" }
-    ],
-    {
-      duration: 1500,
-      easing: "linear",
-      iterations: Infinity
-    }
-  );
+  vinyl.style.transform = "rotate(" + vinylAngle + "deg)";
 }
 
 function stopVinylAnimation() {
-  if (!vinyl) return;
-  clearTimeout(vinylStartupTimeout);
-  vinyl.getAnimations().forEach(function (anim) {
-    anim.cancel();
-  });
-  vinyl.style.animation = "none";
-  vinyl.style.transform = "rotate(0deg)";
-}
+  vinylRunning = false;
 
-function getCurrentRotationDegrees(el) {
-  if (!el) return 0;
-
-  var style = window.getComputedStyle(el);
-  var transform = style.transform || "none";
-
-  if (!transform || transform === "none") return 0;
-
-  var match = transform.match(/^matrix\((.+)\)$/);
-  if (!match) return 0;
-
-  var values = match[1].split(",");
-  var a = parseFloat(values[0]);
-  var b = parseFloat(values[1]);
-
-  var angle = Math.atan2(b, a) * (180 / Math.PI);
-  return angle;
-}
-
-function stopVinylAnimation() {
-  if (!vinyl) return;
-
-  if (vinylStartupAnimation) {
-    vinylStartupAnimation.cancel();
-    vinylStartupAnimation = null;
+  if (vinylRafId) {
+    cancelAnimationFrame(vinylRafId);
+    vinylRafId = null;
   }
 
-  if (vinylContinuousAnimation) {
-    vinylContinuousAnimation.cancel();
-    vinylContinuousAnimation = null;
-  }
+  vinylStartTime = 0;
+  vinylLastTime = 0;
+  vinylAngle = 0;
 
-  vinyl.style.transform = "rotate(0deg)";
+  if (vinyl) {
+    vinyl.style.transform = "rotate(0deg)";
+  }
 }
 
-function startVinylContinuous() {
+function startVinylAnimation() {
   if (!vinyl) return;
 
-  var currentAngle = getCurrentRotationDegrees(vinyl);
+  stopVinylAnimation();
 
-  if (vinylContinuousAnimation) {
-    vinylContinuousAnimation.cancel();
-  }
+  vinylRunning = true;
+  vinylStartTime = 0;
+  vinylLastTime = 0;
+  vinylAngle = 0;
 
-  vinylContinuousAnimation = vinyl.animate(
-    [
-      { transform: "rotate(" + currentAngle + "deg)" },
-      { transform: "rotate(" + (currentAngle + 360) + "deg)" }
-    ],
-    {
-      duration: 1500,
-      iterations: Infinity,
-      easing: "linear"
+  var initialPauseMs = 100;      // starts almost with tonearm
+  var rampDurationMs = 2600;     // time to reach full speed
+  var fullSpeedDegPerSec = 240;  // tune this for top speed
+
+  function frame(now) {
+    if (!vinylRunning) return;
+
+    if (!vinylStartTime) {
+      vinylStartTime = now;
+      vinylLastTime = now;
     }
-  );
-}
 
-function startVinylStartup() {
-  if (!vinyl) return;
+    var elapsed = now - vinylStartTime;
+    var deltaMs = now - vinylLastTime;
+    vinylLastTime = now;
 
-  if (vinylStartupAnimation) {
-    vinylStartupAnimation.cancel();
-  }
+    var speedDegPerSec = 0;
 
-  if (vinylContinuousAnimation) {
-    vinylContinuousAnimation.cancel();
-    vinylContinuousAnimation = null;
-  }
-
-  vinyl.style.transform = "rotate(0deg)";
-
-  vinylStartupAnimation = vinyl.animate(
-    [
-      { transform: "rotate(0deg)", offset: 0 },
-      { transform: "rotate(0deg)", offset: 0.03 },
-      { transform: "rotate(3deg)", offset: 0.08 },
-      { transform: "rotate(12deg)", offset: 0.14 },
-      { transform: "rotate(32deg)", offset: 0.22 },
-      { transform: "rotate(72deg)", offset: 0.32 },
-      { transform: "rotate(150deg)", offset: 0.46 },
-      { transform: "rotate(270deg)", offset: 0.60 },
-      { transform: "rotate(430deg)", offset: 0.76 },
-      { transform: "rotate(540deg)", offset: 1 }
-    ],
-    {
-      duration: 3200,
-      easing: "linear",
-      fill: "forwards"
+    if (elapsed <= initialPauseMs) {
+      speedDegPerSec = 0;
+    } else if (elapsed <= initialPauseMs + rampDurationMs) {
+      var t = (elapsed - initialPauseMs) / rampDurationMs;
+      var eased = easeInOutCubic(t);
+      speedDegPerSec = fullSpeedDegPerSec * eased;
+    } else {
+      speedDegPerSec = fullSpeedDegPerSec;
     }
-  );
 
-  vinylStartupAnimation.finished
-    .then(function () {
-      startVinylContinuous();
-    })
-    .catch(function () {
-      /* animation was cancelled */
-    });
+    vinylAngle += speedDegPerSec * (deltaMs / 1000);
+    applyVinylRotation();
+
+    vinylRafId = requestAnimationFrame(frame);
+  }
+
+  vinylRafId = requestAnimationFrame(frame);
 }
 
 function setLoading(isLoading) {
   if (!loadingOverlay) return;
 
   if (isLoading) {
-    stopVinylAnimation();
-    startVinylStartup();
+    startVinylAnimation();
 
     loadingOverlay.style.display = "flex";
     requestAnimationFrame(function () {
