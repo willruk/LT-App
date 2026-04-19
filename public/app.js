@@ -1,6 +1,5 @@
 console.log("Life Tracks loaded");
 
-
 var birthdayInput = document.getElementById("birthday");
 var goButton = document.getElementById("go");
 var rangeNote = document.getElementById("rangeNote");
