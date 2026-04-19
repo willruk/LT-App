@@ -120,12 +120,7 @@ async function getSongForDate(targetDate) {
     LIMIT 1
   `;
 
-  const isoDate = toIsoDate(targetDate);
-  console.log("getSongForDate target:", isoDate);
-
-  const { rows } = await pool.query(sql, [isoDate]);
-  console.log("getSongForDate result:", rows[0]);
-
+  const { rows } = await pool.query(sql, [toIsoDate(targetDate)]);
   return rows[0] || null;
 }
 
@@ -217,18 +212,10 @@ function phraseBonus(expected, candidate) {
   const a = cleanSpotifyText(expected);
   const b = cleanSpotifyText(candidate);
 
-  if (!a || !b) {
-    return 0;
-  }
-  if (a === b) {
-    return 0.55;
-  }
-  if (b.includes(a)) {
-    return 0.25;
-  }
-  if (a.includes(b)) {
-    return 0.12;
-  }
+  if (!a || !b) return 0;
+  if (a === b) return 0.55;
+  if (b.includes(a)) return 0.25;
+  if (a.includes(b)) return 0.12;
   return 0;
 }
 
@@ -236,20 +223,14 @@ function startsWithBonus(expected, candidate) {
   const a = cleanSpotifyText(expected);
   const b = cleanSpotifyText(candidate);
 
-  if (!a || !b) {
-    return 0;
-  }
-  if (b.startsWith(a)) {
-    return 0.18;
-  }
+  if (!a || !b) return 0;
+  if (b.startsWith(a)) return 0.18;
   return 0;
 }
 
 function versionPenalty(trackName) {
   const cleaned = cleanSpotifyText(trackName);
-  if (!cleaned) {
-    return 0;
-  }
+  if (!cleaned) return 0;
 
   let penalty = 0;
   const patterns = [
@@ -283,10 +264,7 @@ function exactArtistBonus(expectedArtist, spotifyArtists) {
   const expected = cleanSpotifyText(expectedArtist);
   const joined = cleanSpotifyText(spotifyArtists);
 
-  if (!expected || !joined) {
-    return 0;
-  }
-
+  if (!expected || !joined) return 0;
   return joined === expected ? 0.22 : 0;
 }
 
@@ -311,14 +289,22 @@ function scoreSpotifyCandidate(expectedTitle, expectedArtist, track) {
   return (titleScore * 0.68) + (artistScore * 0.32) + popularityBonus - penalty;
 }
 
+const spotifyLookupCache = new Map();
+
 async function findBestSpotifyTrack(title, artist) {
   if (!hasSpotifyCredentials) {
     return null;
   }
 
+  const cacheKey = `${title}|||${artist}`;
+  if (spotifyLookupCache.has(cacheKey)) {
+    return spotifyLookupCache.get(cacheKey);
+  }
+
   try {
     const accessToken = await getSpotifyAccessToken();
     if (!accessToken) {
+      spotifyLookupCache.set(cacheKey, null);
       return null;
     }
 
@@ -367,15 +353,11 @@ async function findBestSpotifyTrack(title, artist) {
     }
 
     if (!bestTrack || bestScore < 0.82) {
-      console.log("No confident Spotify match:", {
-        title,
-        artist,
-        bestScore
-      });
+      spotifyLookupCache.set(cacheKey, null);
       return null;
     }
 
-    return {
+    const result = {
       id: bestTrack.id,
       url:
         bestTrack.external_urls && bestTrack.external_urls.spotify
@@ -385,10 +367,20 @@ async function findBestSpotifyTrack(title, artist) {
       name: bestTrack.name,
       artists: Array.isArray(bestTrack.artists)
         ? bestTrack.artists.map((item) => item.name)
-        : []
+        : [],
+      albumImage:
+        bestTrack.album &&
+        Array.isArray(bestTrack.album.images) &&
+        bestTrack.album.images.length
+          ? bestTrack.album.images[0].url
+          : ""
     };
+
+    spotifyLookupCache.set(cacheKey, result);
+    return result;
   } catch (error) {
     console.error("Spotify lookup failed:", error);
+    spotifyLookupCache.set(cacheKey, null);
     return null;
   }
 }
@@ -409,8 +401,6 @@ app.get("/api/health", async (_req, res) => {
 app.get("/api/birthday", async (req, res) => {
   try {
     const birthday = parseBirthday(String(req.query.date || ""));
-    console.log("Raw birthday query:", req.query.date);
-console.log("Parsed birthday ISO:", birthday ? toIsoDate(birthday) : null);
     if (!birthday) {
       return res.status(400).json({
         error: "Please provide a valid date in YYYY-MM-DD format."
@@ -460,20 +450,20 @@ console.log("Parsed birthday ISO:", birthday ? toIsoDate(birthday) : null);
     const yearly = [];
     for (let year = birthYear + 1; year <= maxYear; year += 1) {
       const anniv = safeBirthdayForYear(month, day, year);
-      if (!anniv) {
-        continue;
-      }
+      if (!anniv) continue;
 
       const row = await getSongForDate(anniv);
-      if (!row) {
-        continue;
-      }
+      if (!row) continue;
+
+      const yearSpotify = await findBestSpotifyTrack(row.title, row.artist);
 
       yearly.push({
         age: year - birthYear,
         year,
         title: row.title,
-        artist: row.artist
+        artist: row.artist,
+        blurb: row.openai_blurb || "",
+        albumImage: yearSpotify && yearSpotify.albumImage ? yearSpotify.albumImage : ""
       });
     }
 
