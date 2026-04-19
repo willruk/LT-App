@@ -1,335 +1,271 @@
-import express from "express";
-import helmet from "helmet";
-import compression from "compression";
-import path from "path";
-import { fileURLToPath } from "url";
-import dotenv from "dotenv";
-import pg from "pg";
+console.log("Life Tracks loaded");
 
-dotenv.config();
+var birthdayInput = document.getElementById("birthday");
+var goButton = document.getElementById("go");
+var rangeNote = document.getElementById("rangeNote");
+var birthResult = document.getElementById("birthResult");
+var yearlyResult = document.getElementById("yearlyResult");
+var loadingOverlay = document.getElementById("loadingOverlay");
+var yearlyCard = document.getElementById("yearlyCard");
 
-const { Pool } = pg;
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+function setLoading(isLoading) {
+  if (!loadingOverlay) return;
 
-const app = express();
-const PORT = Number(process.env.PORT || 3000);
+  if (isLoading) {
+    loadingOverlay.style.display = "flex";
+    requestAnimationFrame(function () {
+      loadingOverlay.classList.add("active");
+      loadingOverlay.setAttribute("aria-hidden", "false");
+    });
+  } else {
+    loadingOverlay.classList.remove("active");
+    loadingOverlay.setAttribute("aria-hidden", "true");
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === "production"
-    ? { rejectUnauthorized: false }
-    : false
-});
-
-app.use(
-  helmet({
-    contentSecurityPolicy: false,
-    crossOriginEmbedderPolicy: false
-  })
-);
-
-app.use(compression());
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
-
-function parseBirthday(input) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(input || ""))) return null;
-  const d = new Date(`${input}T00:00:00Z`);
-  return Number.isNaN(d.getTime()) ? null : d;
+    setTimeout(function () {
+      if (!loadingOverlay.classList.contains("active")) {
+        loadingOverlay.style.display = "none";
+      }
+    }, 450);
+  }
 }
 
-function toIsoDate(date) {
-  return date.toISOString().slice(0, 10);
+function showResults() {
+  var birthCard = document.getElementById("birthCard");
+  var wrap = document.querySelector(".wrap");
+
+  if (birthCard) birthCard.style.display = "block";
+  if (yearlyCard) yearlyCard.style.display = "block";
+  if (wrap) wrap.classList.add("results-active");
 }
 
-function fmtDate(date) {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC"
-  }).format(date);
-}
-
-function safeBirthdayForYear(month, day, year) {
-  const d = new Date(Date.UTC(year, month - 1, day));
-  if (d.getUTCMonth() !== month - 1 || d.getUTCDate() !== day) return null;
-  return d;
-}
-
-function escapeSvgText(value) {
+function escapeHtml(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
+    .replace(/'/g, "&#39;");
 }
 
-function buildFallbackArtwork(title, artist) {
-  const safeTitle = escapeSvgText(title).slice(0, 28);
-  const safeArtist = escapeSvgText(artist).slice(0, 32);
-
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640">
-      <rect width="640" height="640" rx="36" fill="#0b0b0f"/>
-      <circle cx="320" cy="320" r="240" fill="#111217"/>
-      <circle cx="320" cy="320" r="200" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
-      <circle cx="320" cy="320" r="165" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="2"/>
-      <circle cx="320" cy="320" r="130" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="2"/>
-      <circle cx="320" cy="320" r="100" fill="#ff3be2"/>
-      <circle cx="320" cy="320" r="16" fill="#f5f5f5"/>
-      <text x="320" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#111">${safeTitle}</text>
-      <text x="320" y="325" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#111">${safeArtist}</text>
-      <text x="320" y="352" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#222">LIFE TRACKS</text>
-    </svg>
-  `;
-
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-}
-
-function buildSpotifySearchUrl(title, artist) {
-  const q = encodeURIComponent(`${title} ${artist}`.trim());
-  return `https://open.spotify.com/search/${q}`;
-}
-
-function buildAppleMusicSearchUrl(title, artist) {
-  const q = encodeURIComponent(`${title} ${artist}`.trim());
-  return `https://music.apple.com/us/search?term=${q}`;
-}
-
-const hasSpotify =
-  Boolean(process.env.SPOTIFY_CLIENT_ID) &&
-  Boolean(process.env.SPOTIFY_CLIENT_SECRET);
-
-let spotifyToken = "";
-let spotifyExpiresAt = 0;
-
-async function getSpotifyToken() {
-  if (!hasSpotify) return null;
-
-  const now = Date.now();
-  if (spotifyToken && now < spotifyExpiresAt - 60000) {
-    return spotifyToken;
-  }
-
-  const auth = Buffer.from(
-    `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
-  ).toString("base64");
-
-  try {
-    const res = await fetch("https://accounts.spotify.com/api/token", {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${auth}`,
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: "grant_type=client_credentials"
-    });
-
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("Spotify token request failed:", res.status, text);
-      return null;
-    }
-
-    const data = await res.json();
-    spotifyToken = data.access_token || "";
-    spotifyExpiresAt = now + Number(data.expires_in || 3600) * 1000;
-
-    return spotifyToken || null;
-  } catch (error) {
-    console.error("Spotify token failed:", error);
-    return null;
-  }
-}
-
-async function getSpotifyTrackData(title, artist) {
-  try {
-    const token = await getSpotifyToken();
-    if (!token) return null;
-
-    const query = encodeURIComponent(`${title} ${artist}`.trim());
-
-    const res = await fetch(
-      `https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
-
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("Spotify search failed:", res.status, text);
-      return null;
-    }
-
-    const data = await res.json();
-    const track = data?.tracks?.items?.[0];
-    if (!track) return null;
-
-    return {
-      albumImage: track.album?.images?.[0]?.url || null,
-      url: track.external_urls?.spotify || buildSpotifySearchUrl(title, artist),
-      embedUrl: track.id ? `https://open.spotify.com/embed/track/${track.id}` : null
-    };
-  } catch (error) {
-    console.error("Spotify search failed:", error);
-    return null;
-  }
-}
-
-async function getDateRange() {
-  const { rows } = await pool.query(`
-    SELECT
-      MIN(was_number_one_from) AS min_date,
-      MAX(was_number_one_from) AS max_date
-    FROM number_one_songs
-    WHERE was_number_one_from IS NOT NULL
-      AND COALESCE(artist, '') <> ''
-      AND COALESCE(title, '') <> ''
-  `);
-  return rows[0] || null;
-}
-
-async function getSongForDate(targetDate) {
-  const { rows } = await pool.query(
-    `
-    SELECT
-      was_number_one_from,
-      artist,
-      title,
-      openai_blurb,
-      blurb_status
-    FROM number_one_songs
-    WHERE was_number_one_from <= $1::date
-      AND was_number_one_from IS NOT NULL
-      AND COALESCE(artist, '') <> ''
-      AND COALESCE(title, '') <> ''
-    ORDER BY was_number_one_from DESC
-    LIMIT 1
-    `,
-    [toIsoDate(targetDate)]
+function renderMusicButtons(spotifyUrl, appleUrl) {
+  return (
+    "<div class='music-buttons'>" +
+      "<a href='" + escapeHtml(spotifyUrl) + "' target='_blank' rel='noopener noreferrer' aria-label='Open in Spotify'>" +
+        "<img src='/spotify_button_small.png' alt='Spotify'>" +
+      "</a>" +
+      "<a href='" + escapeHtml(appleUrl) + "' target='_blank' rel='noopener noreferrer' aria-label='Open in Apple Music'>" +
+        "<img src='/apple_button_small.png' alt='Apple Music'>" +
+      "</a>" +
+    "</div>"
   );
-  return rows[0] || null;
 }
 
-app.get("/api/health", async (_req, res) => {
-  try {
-    await pool.query("SELECT 1");
-    res.json({ ok: true });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, error: error.message });
+function renderBirthSong(data) {
+  if (!data || !data.birthSong) {
+    birthResult.innerHTML = "No data found.";
+    return;
   }
-});
 
-app.get("/api/birthday", async (req, res) => {
-  try {
-    const birthday = parseBirthday(String(req.query.date || ""));
-    if (!birthday) {
-      return res.status(400).json({
-        error: "Please provide a valid date in YYYY-MM-DD format."
-      });
-    }
+  var song = data.birthSong;
 
-    const rangeRow = await getDateRange();
-    if (!rangeRow?.min_date || !rangeRow?.max_date) {
-      return res.status(500).json({
-        error: "No chart data found in the database."
-      });
-    }
+  var html =
+    "<div class='song-hero'>" + escapeHtml(song.title) + "</div>" +
+    "<div class='artist'>" + escapeHtml(song.artist) + "</div>";
 
-    const minDate = new Date(rangeRow.min_date);
-    const maxDate = new Date(rangeRow.max_date);
+  if (song.startDateFormatted) {
+    html +=
+      "<div class='note'>Became No. 1 on " +
+      escapeHtml(song.startDateFormatted) +
+      "</div>";
+  }
 
-    if (birthday < minDate || birthday > maxDate) {
-      return res.status(400).json({
-        error: `That date is outside the available chart data. Range: ${fmtDate(minDate)} to ${fmtDate(maxDate)}.`
-      });
-    }
+  html +=
+    "<div class='note' style='margin-top:10px'>" +
+    escapeHtml(song.blurb || "No database blurb available.") +
+    "</div>";
 
-    const birthRow = await getSongForDate(birthday);
-    if (!birthRow) {
-      return res.status(404).json({
-        error: "No chart entry was found for that date."
-      });
-    }
+  if (song.spotify && song.spotify.embedUrl) {
+    html +=
+      "<div class='spotify-embed'>" +
+        "<iframe" +
+          " src='" + escapeHtml(song.spotify.embedUrl) + "'" +
+          " allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'" +
+          " loading='lazy'" +
+          " title='Spotify player for " + escapeHtml(song.title) + " by " + escapeHtml(song.artist) + "'" +
+        "></iframe>" +
+      "</div>";
+  }
 
-    const birthSpotify = await getSpotifyTrackData(birthRow.title, birthRow.artist);
+  html += renderMusicButtons(song.spotifyUrl, song.appleMusicUrl);
 
-    const birthSong = {
-      title: birthRow.title,
-      artist: birthRow.artist,
-      blurb: birthRow.openai_blurb || "",
-      blurbStatus: birthRow.blurb_status || "",
-      startDate: toIsoDate(new Date(birthRow.was_number_one_from)),
-      startDateFormatted: fmtDate(new Date(birthRow.was_number_one_from)),
-      albumImage: birthSpotify?.albumImage || buildFallbackArtwork(birthRow.title, birthRow.artist),
-      spotify: birthSpotify
-        ? {
-            url: birthSpotify.url,
-            embedUrl: birthSpotify.embedUrl
-          }
-        : null,
-      spotifyUrl: birthSpotify?.url || buildSpotifySearchUrl(birthRow.title, birthRow.artist),
-      appleMusicUrl: buildAppleMusicSearchUrl(birthRow.title, birthRow.artist)
-    };
+  birthResult.innerHTML = html;
+}
 
-    const month = birthday.getUTCMonth() + 1;
-    const day = birthday.getUTCDate();
-    const birthYear = birthday.getUTCFullYear();
-    const maxYear = maxDate.getUTCFullYear();
+function renderYearlySongs(rows) {
+  if (!rows || rows.length === 0) {
+    yearlyResult.innerHTML = "No matches found.";
+    return;
+  }
 
-    const yearly = [];
-    for (let year = birthYear + 1; year <= maxYear; year += 1) {
-      const anniv = safeBirthdayForYear(month, day, year);
-      if (!anniv) continue;
+  var html = "";
 
-      const row = await getSongForDate(anniv);
-      if (!row) continue;
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    var triviaId = "trivia-" + row.year;
 
-      const spotifyTrack = await getSpotifyTrackData(row.title, row.artist);
+    html +=
+      "<div class='year-card year-card-rich'>" +
+        "<div class='year-card-top'>" +
+          "<div class='year-meta'>" +
+            "<span>" + escapeHtml(row.year) + "</span>" +
+            "<span> • Age " + escapeHtml(row.age) + "</span>" +
+          "</div>" +
+          renderMusicButtons(row.spotifyUrl, row.appleMusicUrl) +
+        "</div>" +
 
-      yearly.push({
-        age: year - birthYear,
-        year,
-        title: row.title,
-        artist: row.artist,
-        blurb: row.openai_blurb || "",
-        albumImage: spotifyTrack?.albumImage || buildFallbackArtwork(row.title, row.artist),
-        spotifyUrl: spotifyTrack?.url || buildSpotifySearchUrl(row.title, row.artist),
-        appleMusicUrl: buildAppleMusicSearchUrl(row.title, row.artist)
-      });
-    }
+        "<div class='year-card-body'>" +
+          "<img class='year-art' src='" +
+            escapeHtml(row.albumImage) +
+            "' alt='Artwork for " + escapeHtml(row.title) + " by " + escapeHtml(row.artist) + "'" +
+            " loading='lazy'>" +
 
-    return res.json({
-      requestedDate: toIsoDate(birthday),
-      range: {
-        min: toIsoDate(minDate),
-        max: toIsoDate(maxDate),
-        minFormatted: fmtDate(minDate),
-        maxFormatted: fmtDate(maxDate)
-      },
-      birthSong,
-      yearly
-    });
-  } catch (error) {
-    console.error("Birthday route failed:", error);
-    return res.status(500).json({
-      error: "Something went wrong while loading the chart data.",
-      detail: error.message
+          "<div class='year-copy'>" +
+            "<div class='year-song-title'>" +
+              escapeHtml(row.title) +
+            "</div>" +
+
+            "<div class='year-song-artist'>" +
+              escapeHtml(row.artist) +
+            "</div>" +
+
+            "<button class='trivia-toggle' aria-controls='" +
+              triviaId +
+              "' aria-expanded='false' type='button'>" +
+              "Trivia <span class='trivia-caret'>▾</span>" +
+            "</button>" +
+
+            "<div class='year-trivia' id='" +
+              triviaId +
+              "' hidden>" +
+              escapeHtml(row.blurb || "No trivia available.") +
+            "</div>" +
+          "</div>" +
+        "</div>" +
+      "</div>";
+  }
+
+  yearlyResult.innerHTML = html;
+  attachTriviaToggles();
+}
+
+function attachTriviaToggles() {
+  var toggles = yearlyResult.querySelectorAll(".trivia-toggle");
+
+  for (var i = 0; i < toggles.length; i++) {
+    toggles[i].addEventListener("click", function () {
+      var controlsId = this.getAttribute("aria-controls");
+      var panel = document.getElementById(controlsId);
+      var expanded = this.getAttribute("aria-expanded") === "true";
+
+      var allPanels = yearlyResult.querySelectorAll(".year-trivia");
+      var allButtons = yearlyResult.querySelectorAll(".trivia-toggle");
+
+      for (var j = 0; j < allPanels.length; j++) {
+        allPanels[j].hidden = true;
+      }
+      for (var k = 0; k < allButtons.length; k++) {
+        allButtons[k].setAttribute("aria-expanded", "false");
+      }
+
+      this.setAttribute("aria-expanded", expanded ? "false" : "true");
+      if (panel) panel.hidden = expanded;
     });
   }
-});
+}
 
-app.get("*", (_req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
+function finishAfterMinimum(startTime, callback) {
+  var minimumLoadingTime = 3000;
+  var elapsed = Date.now() - startTime;
+  var remaining = Math.max(0, minimumLoadingTime - elapsed);
+  setTimeout(callback, remaining);
+}
 
-app.listen(PORT, () => {
-  console.log(`Life Tracks listening on port ${PORT}`);
-});
+function resetButton() {
+  if (!goButton) return;
+  goButton.disabled = false;
+  goButton.textContent = "Find my songs";
+}
+
+function submit() {
+  var birthday = birthdayInput && birthdayInput.value;
+  if (!birthday) return;
+
+  if (goButton) {
+    goButton.disabled = true;
+    goButton.textContent = "Loading...";
+  }
+
+  setLoading(true);
+  var startTime = Date.now();
+
+  fetch("/api/birthday?date=" + encodeURIComponent(birthday))
+    .then(function (res) {
+      return res.json().then(function (data) {
+        if (!res.ok) {
+          throw new Error(data && data.error ? data.error : "Error");
+        }
+        return data;
+      });
+    })
+    .then(function (data) {
+      finishAfterMinimum(startTime, function () {
+        if (data.range && data.range.minFormatted && data.range.maxFormatted && rangeNote) {
+          rangeNote.textContent =
+            "Available data: " +
+            data.range.minFormatted +
+            " - " +
+            data.range.maxFormatted;
+        } else if (rangeNote) {
+          rangeNote.textContent = "";
+        }
+
+        showResults();
+        renderBirthSong(data);
+        renderYearlySongs(data.yearly);
+
+        resetButton();
+        setLoading(false);
+      });
+    })
+    .catch(function (error) {
+      finishAfterMinimum(startTime, function () {
+        showResults();
+
+        if (birthResult) {
+          birthResult.innerHTML =
+            error && error.message
+              ? escapeHtml(error.message)
+              : "Something went wrong.";
+        }
+
+        if (yearlyResult) {
+          yearlyResult.innerHTML = "";
+        }
+
+        resetButton();
+        setLoading(false);
+      });
+    });
+}
+
+if (goButton) {
+  goButton.addEventListener("click", submit);
+}
+
+if (birthdayInput) {
+  birthdayInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      submit();
+    }
+  });
+}
