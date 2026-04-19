@@ -120,18 +120,18 @@ function renderBirthSong(data) {
     html +=
       "<a class='music-link spotify' href='" +
       escapeHtml(song.spotify.url) +
-      "' target='_blank' rel='noopener noreferrer'>ⓢ Open in Spotify</a>";
+      "' target='_blank' rel='noopener noreferrer'>Open in Spotify</a>";
   } else {
     html +=
       "<a class='music-link spotify' href='" +
       escapeHtml(links.spotify) +
-      "' target='_blank' rel='noopener noreferrer'>ⓢ Find on Spotify</a>";
+      "' target='_blank' rel='noopener noreferrer'>Find on Spotify</a>";
   }
 
   html +=
     "<a class='music-link apple' href='" +
     escapeHtml(links.apple) +
-    "' target='_blank' rel='noopener noreferrer'> Find on Apple Music</a>" +
+    "' target='_blank' rel='noopener noreferrer'>Find on Apple Music</a>" +
     "</div>";
 
   birthResult.innerHTML = html;
@@ -169,6 +169,12 @@ function finishAfterMinimum(startTime, callback) {
   setTimeout(callback, remaining);
 }
 
+function resetButton() {
+  if (!goButton) return;
+  goButton.disabled = false;
+  goButton.textContent = "Find my songs";
+}
+
 function submit() {
   var birthday = birthdayInput && birthdayInput.value;
 
@@ -176,8 +182,11 @@ function submit() {
     return;
   }
 
-  goButton.disabled = true;
-  goButton.textContent = "Loading...";
+  if (goButton) {
+    goButton.disabled = true;
+    goButton.textContent = "Loading...";
+  }
+
   setLoading(true);
 
   var startTime = Date.now();
@@ -193,13 +202,13 @@ function submit() {
     })
     .then(function (data) {
       finishAfterMinimum(startTime, function () {
-        if (data.range && data.range.minFormatted && data.range.maxFormatted) {
+        if (data.range && data.range.minFormatted && data.range.maxFormatted && rangeNote) {
           rangeNote.textContent =
             "Available data: " +
             data.range.minFormatted +
             " - " +
             data.range.maxFormatted;
-        } else {
+        } else if (rangeNote) {
           rangeNote.textContent = "";
         }
 
@@ -207,22 +216,26 @@ function submit() {
         renderBirthSong(data);
         renderYearlySongs(data.yearly);
 
-        goButton.disabled = false;
-        goButton.textContent = "Find my songs";
+        resetButton();
         setLoading(false);
       });
     })
     .catch(function (error) {
       finishAfterMinimum(startTime, function () {
         showResults();
-        birthResult.innerHTML =
-          error && error.message
-            ? escapeHtml(error.message)
-            : "Something went wrong.";
-        yearlyResult.innerHTML = "";
 
-        goButton.disabled = false;
-        goButton.textContent = "Find my songs";
+        if (birthResult) {
+          birthResult.innerHTML =
+            error && error.message
+              ? escapeHtml(error.message)
+              : "Something went wrong.";
+        }
+
+        if (yearlyResult) {
+          yearlyResult.innerHTML = "";
+        }
+
+        resetButton();
         setLoading(false);
       });
     });
