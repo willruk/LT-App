@@ -58,6 +58,38 @@ function safeBirthdayForYear(month, day, year) {
   return d;
 }
 
+/* 👇 ADD THIS HERE */
+
+function escapeSvgText(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function buildFallbackArtwork(title, artist) {
+  const safeTitle = escapeSvgText(title).slice(0, 28);
+  const safeArtist = escapeSvgText(artist).slice(0, 32);
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="640" height="640">
+      <rect width="100%" height="100%" fill="#0b0b0f"/>
+      <circle cx="320" cy="320" r="240" fill="#111"/>
+      <circle cx="320" cy="320" r="100" fill="#ff3be2"/>
+      <text x="320" y="300" text-anchor="middle" fill="#111">${safeTitle}</text>
+      <text x="320" y="330" text-anchor="middle" fill="#111">${safeArtist}</text>
+    </svg>
+  `;
+
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+  const d = new Date(Date.UTC(year, month - 1, day));
+  if (d.getUTCMonth() !== month - 1 || d.getUTCDate() !== day) return null;
+  return d;
+}
+
 async function getDateRange() {
   const { rows } = await pool.query(`
     SELECT
@@ -142,6 +174,7 @@ app.get("/api/birthday", async (req, res) => {
       blurbStatus: birthRow.blurb_status || "",
       startDate: toIsoDate(new Date(birthRow.was_number_one_from)),
       startDateFormatted: fmtDate(new Date(birthRow.was_number_one_from))
+      albumImage: buildFallbackArtwork(birthRow.title, birthRow.artist),
     };
 
     const month = birthday.getUTCMonth() + 1;
@@ -163,7 +196,7 @@ app.get("/api/birthday", async (req, res) => {
         title: row.title,
         artist: row.artist,
         blurb: row.openai_blurb || "",
-        albumImage: ""
+        albumImage: buildFallbackArtwork(row.title, row.artist)
       });
     }
 
