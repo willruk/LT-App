@@ -589,14 +589,14 @@
 
 .tonearm {
   position: absolute;
-  right: 32px;
-  top: 34px;
+  right: 26px;
+  top: 24px;
   width: 132px;
   height: 12px;
   background: linear-gradient(90deg, #64748b, #94a3b8 42%, #cbd5e1);
   border-radius: 999px;
   transform-origin: 100% 50%;
-  transform: rotate(90deg);
+  transform: rotate(-90deg);
   box-shadow: 0 2px 10px rgba(0,0,0,.28);
   z-index: 4;
   animation: tonearm-drop 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -632,10 +632,10 @@
 }
 
 @keyframes tonearm-drop {
-  0%   { transform: rotate(90deg); }
-  78%  { transform: rotate(122deg); }
-  88%  { transform: rotate(118deg); }
-  100% { transform: rotate(120deg); }
+  0%   { transform: rotate(-90deg); }
+  78%  { transform: rotate(-58deg); }
+  88%  { transform: rotate(-62deg); }
+  100% { transform: rotate(-60deg); }
 }
     .loading-text {
       font-size: 1rem;
