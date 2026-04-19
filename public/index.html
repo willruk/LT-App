@@ -585,17 +585,24 @@
 
     .tonearm {
   position: absolute;
-  right: 8%;
-  top: 7%;
-  width: 132px;
+  right: 6%;
+  top: 6%;
+  width: 140px;
   height: 12px;
+
   background: linear-gradient(90deg, #cbd5e1, #94a3b8 58%, #64748b);
   border-radius: 999px;
-  transform-origin: 96% 50%;
+
+  /* 🔑 THIS IS THE FIX */
+  transform-origin: 100% 50%;
+
+  /* start position */
   transform: rotate(90deg);
+
   box-shadow: 0 2px 10px rgba(0,0,0,.28);
   z-index: 4;
-  animation: tonearm-drop 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+  animation: tonearm-drop 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
     .tonearm::before {
