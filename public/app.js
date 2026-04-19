@@ -7,11 +7,98 @@ var birthResult = document.getElementById("birthResult");
 var yearlyResult = document.getElementById("yearlyResult");
 var loadingOverlay = document.getElementById("loadingOverlay");
 var yearlyCard = document.getElementById("yearlyCard");
+var vinyl = document.querySelector(".vinyl");
+var vinylStartupTimeout = null;
+
+function getCurrentRotationDegrees(el) {
+  var style = window.getComputedStyle(el);
+  var transform = style.transform || style.webkitTransform || "none";
+
+  if (!transform || transform === "none") return 0;
+
+  var values = transform.match(/matrix\(([^)]+)\)/);
+  if (!values) return 0;
+
+  var parts = values[1].split(",");
+  var a = parseFloat(parts[0]);
+  var b = parseFloat(parts[1]);
+
+  var angle = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+  return angle;
+}
+
+function startVinylStartup() {
+  if (!vinyl) return;
+
+  vinyl.style.animation = "none";
+  vinyl.style.transform = "rotate(0deg)";
+  void vinyl.offsetWidth;
+
+  vinyl.animate(
+    [
+      { transform: "rotate(0deg)", offset: 0 },
+      { transform: "rotate(0deg)", offset: 0.03 },
+      { transform: "rotate(3deg)", offset: 0.08 },
+      { transform: "rotate(12deg)", offset: 0.14 },
+      { transform: "rotate(32deg)", offset: 0.22 },
+      { transform: "rotate(72deg)", offset: 0.32 },
+      { transform: "rotate(150deg)", offset: 0.46 },
+      { transform: "rotate(270deg)", offset: 0.60 },
+      { transform: "rotate(430deg)", offset: 0.76 },
+      { transform: "rotate(540deg)", offset: 1 }
+    ],
+    {
+      duration: 3200,
+      easing: "linear",
+      fill: "forwards"
+    }
+  );
+
+  clearTimeout(vinylStartupTimeout);
+  vinylStartupTimeout = setTimeout(function () {
+    startVinylContinuous();
+  }, 3200);
+}
+
+function startVinylContinuous() {
+  if (!vinyl) return;
+
+  var currentAngle = getCurrentRotationDegrees(vinyl);
+
+  vinyl.style.animation = "none";
+  vinyl.style.transform = "rotate(" + currentAngle + "deg)";
+  void vinyl.offsetWidth;
+
+  vinyl.animate(
+    [
+      { transform: "rotate(" + currentAngle + "deg)" },
+      { transform: "rotate(" + (currentAngle + 360) + "deg)" }
+    ],
+    {
+      duration: 1500,
+      easing: "linear",
+      iterations: Infinity
+    }
+  );
+}
+
+function stopVinylAnimation() {
+  if (!vinyl) return;
+  clearTimeout(vinylStartupTimeout);
+  vinyl.getAnimations().forEach(function (anim) {
+    anim.cancel();
+  });
+  vinyl.style.animation = "none";
+  vinyl.style.transform = "rotate(0deg)";
+}
 
 function setLoading(isLoading) {
   if (!loadingOverlay) return;
 
   if (isLoading) {
+    stopVinylAnimation();
+    startVinylStartup();
+
     loadingOverlay.style.display = "flex";
     requestAnimationFrame(function () {
       loadingOverlay.classList.add("active");
@@ -24,6 +111,7 @@ function setLoading(isLoading) {
     setTimeout(function () {
       if (!loadingOverlay.classList.contains("active")) {
         loadingOverlay.style.display = "none";
+        stopVinylAnimation();
       }
     }, 450);
   }
