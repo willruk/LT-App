@@ -1,5 +1,5 @@
 console.log("Life Tracks loaded");
-console.log("Spotify search URL:", links.spotify);
+
 
 var birthdayInput = document.getElementById("birthday");
 var goButton = document.getElementById("go");
