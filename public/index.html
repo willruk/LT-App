@@ -585,50 +585,42 @@
 
     .tonearm {
   position: absolute;
-  right: 6%;
-  top: 6%;
-  width: 140px;
+  right: 14px;
+  top: 18px;
+  width: 132px;
   height: 12px;
-
-  background: linear-gradient(90deg, #cbd5e1, #94a3b8 58%, #64748b);
+  background: linear-gradient(90deg, #64748b, #94a3b8 42%, #cbd5e1);
   border-radius: 999px;
-
-  /* 🔑 THIS IS THE FIX */
-  transform-origin: 100% 50%;
-
-  /* start position */
+  transform-origin: right center;
   transform: rotate(90deg);
-
   box-shadow: 0 2px 10px rgba(0,0,0,.28);
   z-index: 4;
-
-  animation: tonearm-drop 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: tonearm-drop 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
     .tonearm::before {
-      content: "";
-      position: absolute;
-      right: -10px;
-      top: -7px;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #e2e8f0, #64748b 72%);
-      box-shadow: 0 0 0 6px rgba(51,65,85,.45);
-    }
+  content: "";
+  position: absolute;
+  right: -10px;
+  top: -6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #e2e8f0, #64748b 72%);
+  box-shadow: 0 0 0 6px rgba(51,65,85,.45);
+}
 
     .tonearm::after {
-      content: "";
-      position: absolute;
-      left: 2px;
-      top: 2px;
-      width: 18px;
-      height: 8px;
-      border-radius: 3px;
-      background: linear-gradient(90deg, #f87171, #e2e8f0);
-      box-shadow: 0 1px 3px rgba(0,0,0,.25);
-    }
-
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 18px;
+  height: 8px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #f87171, #e2e8f0);
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
+}
     .loading-text {
       font-size: 1rem;
       font-weight: 700;
@@ -666,8 +658,8 @@
 
     @keyframes tonearm-drop {
   0%   { transform: rotate(90deg); }
-  70%  { transform: rotate(125deg); }
-  85%  { transform: rotate(118deg); }
+  78%  { transform: rotate(122deg); }
+  88%  { transform: rotate(118deg); }
   100% { transform: rotate(120deg); }
 }
 
