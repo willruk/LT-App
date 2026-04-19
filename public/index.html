@@ -681,20 +681,28 @@
     transform: rotate(-77deg) scaleX(1);
   }
 
+    /* arrive at groove */
+  94% {
+    transform: rotate(-80deg) scaleX(1);
+  }
+
+  /* hold briefly before dropping */
   96% {
     transform: rotate(-80deg) scaleX(1);
   }
 
-  98% {
-    transform: rotate(-80deg) scaleX(0.97);
+  /* smooth easing into drop */
+  97.5% {
+    transform: rotate(-80deg) scaleX(0.96);
   }
 
   99% {
-    transform: rotate(-80deg) scaleX(0.985);
+    transform: rotate(-80deg) scaleX(0.90);
   }
 
+  /* final settled position (more pronounced) */
   100% {
-    transform: rotate(-80deg) scaleX(0.94);
+    transform: rotate(-80deg) scaleX(0.84);
   }
 }
 
