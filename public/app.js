@@ -9,6 +9,9 @@ var loadingOverlay = document.getElementById("loadingOverlay");
 var yearlyCard = document.getElementById("yearlyCard");
 var vinyl = document.querySelector(".vinyl");
 var vinylStartupTimeout = null;
+var vinyl = document.querySelector(".vinyl");
+var vinylStartupAnimation = null;
+var vinylContinuousAnimation = null;
 
 function getCurrentRotationDegrees(el) {
   var style = window.getComputedStyle(el);
@@ -90,6 +93,106 @@ function stopVinylAnimation() {
   });
   vinyl.style.animation = "none";
   vinyl.style.transform = "rotate(0deg)";
+}
+
+function getCurrentRotationDegrees(el) {
+  if (!el) return 0;
+
+  var style = window.getComputedStyle(el);
+  var transform = style.transform || "none";
+
+  if (!transform || transform === "none") return 0;
+
+  var match = transform.match(/^matrix\((.+)\)$/);
+  if (!match) return 0;
+
+  var values = match[1].split(",");
+  var a = parseFloat(values[0]);
+  var b = parseFloat(values[1]);
+
+  var angle = Math.atan2(b, a) * (180 / Math.PI);
+  return angle;
+}
+
+function stopVinylAnimation() {
+  if (!vinyl) return;
+
+  if (vinylStartupAnimation) {
+    vinylStartupAnimation.cancel();
+    vinylStartupAnimation = null;
+  }
+
+  if (vinylContinuousAnimation) {
+    vinylContinuousAnimation.cancel();
+    vinylContinuousAnimation = null;
+  }
+
+  vinyl.style.transform = "rotate(0deg)";
+}
+
+function startVinylContinuous() {
+  if (!vinyl) return;
+
+  var currentAngle = getCurrentRotationDegrees(vinyl);
+
+  if (vinylContinuousAnimation) {
+    vinylContinuousAnimation.cancel();
+  }
+
+  vinylContinuousAnimation = vinyl.animate(
+    [
+      { transform: "rotate(" + currentAngle + "deg)" },
+      { transform: "rotate(" + (currentAngle + 360) + "deg)" }
+    ],
+    {
+      duration: 1500,
+      iterations: Infinity,
+      easing: "linear"
+    }
+  );
+}
+
+function startVinylStartup() {
+  if (!vinyl) return;
+
+  if (vinylStartupAnimation) {
+    vinylStartupAnimation.cancel();
+  }
+
+  if (vinylContinuousAnimation) {
+    vinylContinuousAnimation.cancel();
+    vinylContinuousAnimation = null;
+  }
+
+  vinyl.style.transform = "rotate(0deg)";
+
+  vinylStartupAnimation = vinyl.animate(
+    [
+      { transform: "rotate(0deg)", offset: 0 },
+      { transform: "rotate(0deg)", offset: 0.03 },
+      { transform: "rotate(3deg)", offset: 0.08 },
+      { transform: "rotate(12deg)", offset: 0.14 },
+      { transform: "rotate(32deg)", offset: 0.22 },
+      { transform: "rotate(72deg)", offset: 0.32 },
+      { transform: "rotate(150deg)", offset: 0.46 },
+      { transform: "rotate(270deg)", offset: 0.60 },
+      { transform: "rotate(430deg)", offset: 0.76 },
+      { transform: "rotate(540deg)", offset: 1 }
+    ],
+    {
+      duration: 3200,
+      easing: "linear",
+      fill: "forwards"
+    }
+  );
+
+  vinylStartupAnimation.finished
+    .then(function () {
+      startVinylContinuous();
+    })
+    .catch(function () {
+      /* animation was cancelled */
+    });
 }
 
 function setLoading(isLoading) {
