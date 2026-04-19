@@ -35,9 +35,14 @@
     }
 
     .wrap {
-      padding: 4px 14px 40px;
+      padding: 20px 14px 40px;
       max-width: 900px;
       margin: auto;
+      transition: padding 0.45s ease;
+    }
+
+    .wrap.results-active {
+      padding-top: 7px;
     }
 
     .header {
@@ -46,7 +51,7 @@
       justify-content: center;
       align-items: center;
       min-height: 220px;
-      margin-bottom: 18px;
+      margin-bottom: 26px;
       overflow: visible;
       transition: min-height 0.45s ease, margin-bottom 0.45s ease;
     }
@@ -127,7 +132,7 @@
 
     .wrap.results-active .header {
       min-height: 90px;
-      margin-bottom: 8px;
+      margin-bottom: 13px;
     }
 
     .wrap.results-active .header::before {
@@ -162,6 +167,20 @@
       text-align: center;
       position: relative;
       z-index: 1;
+      transition: font-size 0.45s ease, margin 0.45s ease;
+    }
+
+    .wrap.results-active .subtitle {
+      font-size: 0.88rem;
+      margin-top: -2px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle-icon {
+      display: block;
+      margin-top: 6px;
+      font-size: 1.2rem;
+      opacity: 0.7;
     }
 
     .grid {
@@ -453,6 +472,8 @@
         0 22px 60px rgba(0, 0, 0, 0.5);
       overflow: hidden;
       animation: spin-vinyl 1.5s linear infinite;
+      animation-delay: 0.4s;
+      animation-fill-mode: both;
     }
 
     .vinyl::before {
@@ -502,17 +523,17 @@
 
     .tonearm {
       position: absolute;
-      right: 12%;
-      top: 10%;
+      right: 10%;
+      top: 6%;
       width: 132px;
       height: 12px;
       background: linear-gradient(90deg, #cbd5e1, #94a3b8 58%, #64748b);
       border-radius: 999px;
-      transform-origin: 92% 50%;
-      transform: rotate(52deg);
+      transform-origin: 95% 10%;
+      transform: rotate(180deg);
       box-shadow: 0 2px 10px rgba(0,0,0,.28);
       z-index: 4;
-      animation: tonearm-drop 1.8s ease-out forwards;
+      animation: tonearm-drop 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
     .tonearm::before {
@@ -575,11 +596,21 @@
     }
 
     @keyframes tonearm-drop {
-      from { transform: rotate(52deg); }
-      to { transform: rotate(-8deg); }
+      0%   { transform: rotate(180deg); }
+      82%  { transform: rotate(202deg); }
+      90%  { transform: rotate(198deg); }
+      100% { transform: rotate(200deg); }
     }
 
     @media (max-width: 720px) {
+      .wrap {
+        padding: 16px 14px 40px;
+      }
+
+      .wrap.results-active {
+        padding-top: 6px;
+      }
+
       .entry-controls {
         flex-direction: column;
       }
@@ -590,7 +621,7 @@
 
       .header {
         min-height: 150px;
-        margin-bottom: 16px;
+        margin-bottom: 20px;
       }
 
       .hero-logo-main {
@@ -603,6 +634,13 @@
 
       .wrap.results-active .header {
         min-height: 70px;
+        margin-bottom: 10px;
+      }
+
+      .tonearm {
+        right: 8%;
+        top: 5%;
+        width: 118px;
       }
     }
   </style>
@@ -616,7 +654,8 @@
     </div>
 
     <p class="subtitle">
-      Enter your birthday and discover the soundtrack of your life from the #1 hit the day you were born, and every birthday banger since 🎶
+      Enter your Birthday to discover the #1 song on the day you were born and every Birthday since.
+      <span class="subtitle-icon">🎶</span>
     </p>
 
     <div class="grid">
@@ -658,6 +697,6 @@
     <div class="loading-text">Finding your tracks…</div>
   </div>
 
-  <script src="/app.js?v=11"></script>
+  <script src="/app.js?v=12"></script>
 </body>
 </html>
