@@ -511,13 +511,20 @@
   margin: 0 auto;
 }
 
-.vinyl {
+.vinyl-wrap {
   position: absolute;
   left: 50%;
   top: 50%;
   width: 260px;
   height: 260px;
   transform: translate(-50%, -50%) rotate(0deg);
+  animation: vinyl-startup 2.8s cubic-bezier(0.22, 0.7, 0.2, 1) 0s forwards;
+  will-change: transform;
+}
+
+.vinyl {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
   background:
     radial-gradient(circle at 30% 28%, rgba(255,255,255,.18), transparent 0 18%, transparent 19%),
@@ -533,7 +540,7 @@
     0 0 0 14px rgba(15, 23, 42, 0.52),
     0 22px 60px rgba(0, 0, 0, 0.5);
   overflow: hidden;
-  animation: vinyl-motion 4.9s linear infinite;
+  animation: spin-vinyl 1.5s linear 2.8s infinite;
   will-change: transform;
 }
 
@@ -576,8 +583,8 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: min(54vw, 260px);
-  height: min(54vw, 260px);
+  width: 260px;
+  height: 260px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background: linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,0) 34%);
@@ -630,45 +637,6 @@
     0 0 6px rgba(248,113,113,0.18);
 }
 
-@keyframes vinyl-motion {
-  /* initial pause */
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-
-  15% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-
-  /* slow start */
-  22% {
-    transform: translate(-50%, -50%) rotate(4deg);
-  }
-
-  30% {
-    transform: translate(-50%, -50%) rotate(14deg);
-  }
-
-  40% {
-    transform: translate(-50%, -50%) rotate(40deg);
-  }
-
-  52% {
-    transform: translate(-50%, -50%) rotate(95deg);
-  }
-
-  66% {
-    transform: translate(-50%, -50%) rotate(190deg);
-  }
-
-  82% {
-    transform: translate(-50%, -50%) rotate(320deg);
-  }
-
-  100% {
-    transform: translate(-50%, -50%) rotate(540deg);
-  }
-}
 
 @keyframes tonearm-seek {
   0% {
@@ -726,6 +694,40 @@
   50%  { transform: rotate(-79.9deg); }
   75%  { transform: rotate(-80.1deg); }
   100% { transform: rotate(-80deg); }
+}
+    @keyframes vinyl-startup {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  10% {
+    transform: translate(-50%, -50%) rotate(2deg);
+  }
+
+  22% {
+    transform: translate(-50%, -50%) rotate(10deg);
+  }
+
+  38% {
+    transform: translate(-50%, -50%) rotate(28deg);
+  }
+
+  58% {
+    transform: translate(-50%, -50%) rotate(72deg);
+  }
+
+  78% {
+    transform: translate(-50%, -50%) rotate(150deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotate(240deg);
+  }
+}
+
+@keyframes spin-vinyl {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
     
     .loading-text {
@@ -903,10 +905,12 @@
 
   <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
     <div class="turntable" aria-hidden="true">
-      <div class="vinyl">
-        <img src="/icon.png" alt="" class="vinyl-center-icon" />
-      </div>
-      <div class="vinyl-shine"></div>
+      <div class="vinyl-wrap">
+  <div class="vinyl">
+    <img src="/icon.png" alt="" class="vinyl-center-icon" />
+  </div>
+</div>
+<div class="vinyl-shine"></div>
       <div class="tonearm"></div>
     </div>
     <div class="loading-text">Finding your tracks…</div>
