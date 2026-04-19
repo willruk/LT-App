@@ -370,10 +370,24 @@
       box-shadow: inset 0 0 0 2px rgba(255,255,255,0.12);
     }
 
+    .vinyl-center-icon {
+  position: absolute;
+  width: 22%;
+  max-width: 58px;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  border-radius: 16px;
+  pointer-events: none;
+}
+
     .vinyl::after {
       content: "";
       position: absolute;
-      inset: 47.8%;
+      inset: 48.6%;
       border-radius: 50%;
       background: #f8fafc;
       box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.22);
@@ -526,13 +540,15 @@
 
   <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
     <div class="turntable" aria-hidden="true">
-      <div class="vinyl"></div>
-      <div class="vinyl-shine"></div>
-      <div class="tonearm"></div>
-    </div>
+  <div class="vinyl">
+    <img src="/icon.png" alt="" class="vinyl-center-icon" />
+  </div>
+  <div class="vinyl-shine"></div>
+  <div class="tonearm"></div>
+</div>
     <div class="loading-text">Finding your tracks…</div>
   </div>
 
-  <script src="/app.js?v=10"></script>
+  <script src="/app.js?v=11"></script>
 </body>
 </html>
