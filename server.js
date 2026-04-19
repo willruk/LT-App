@@ -58,8 +58,6 @@ function safeBirthdayForYear(month, day, year) {
   return d;
 }
 
-/* 👇 ADD THIS HERE */
-
 function escapeSvgText(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
@@ -72,7 +70,8 @@ function escapeSvgText(value) {
 function buildFallbackArtwork(title, artist) {
   const safeTitle = escapeSvgText(title).slice(0, 28);
   const safeArtist = escapeSvgText(artist).slice(0, 32);
-
+  
+}
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="640" height="640">
       <rect width="100%" height="100%" fill="#0b0b0f"/>
