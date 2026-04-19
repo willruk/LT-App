@@ -56,7 +56,18 @@ function escapeHtml(value) {
 }
 
 function buildSearchLinks(title, artist) {
-  var query = [title || "", artist || ""].join(" ").trim();
+  function cleanText(str) {
+  return (str || "")
+    .replace(/[’‘]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+var safeTitle = cleanText(title);
+var safeArtist = cleanText(artist);
+
+var query = safeTitle + " " + safeArtist;
   return {
     spotify: "https://open.spotify.com/search/" + encodeURIComponent(query),
     apple: "https://music.apple.com/us/search?term=" + encodeURIComponent(query)
