@@ -600,7 +600,7 @@
   background: linear-gradient(90deg, #64748b, #94a3b8 42%, #cbd5e1);
   border-radius: 999px;
   transform-origin: 100% 50%;
-  transform: rotate(-90deg);
+  transform: rotate(-90deg) scaleY(1);
   box-shadow: 0 2px 10px rgba(0,0,0,.28);
   z-index: 4;
   animation:
@@ -681,9 +681,18 @@
     transform: rotate(-77deg);
   }
 
-  100% {
-    transform: rotate(-80deg);
-  }
+  94% {
+  transform: rotate(-80deg) scaleY(1);
+}
+
+97% {
+  transform: rotate(-80deg) scaleY(0.95);
+}
+
+100% {
+  transform: rotate(-80deg) scaleY(0.92);
+  box-shadow: 0 1px 6px rgba(0,0,0,.35);
+}
 }
 
     @keyframes vinyl-motion {
