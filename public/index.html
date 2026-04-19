@@ -600,10 +600,9 @@
   background: linear-gradient(90deg, #64748b, #94a3b8 42%, #cbd5e1);
   border-radius: 999px;
   transform-origin: 100% 50%;
-  transform: rotate(-90deg) scaleY(1);
+  transform: rotate(-90deg) scaleX(1);
   box-shadow: 0 2px 10px rgba(0,0,0,.28);
   z-index: 4;
-
   animation:
     tonearm-seek 3.4s linear forwards,
     tonearm-vibrate 2.2s ease-in-out 3.45s infinite;
@@ -622,74 +621,80 @@
 }
 
 .tonearm::after {
-  /* existing styles */
-  animation: needle-settle 3.4s linear forwards;
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 22px;
+  height: 10px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #f87171, #e2e8f0);
+  box-shadow:
+    0 1px 3px rgba(0,0,0,.25),
+    0 0 6px rgba(248,113,113,0.18);
+  transform-origin: left center;
 }
 
 
 @keyframes tonearm-seek {
   0% {
-    transform: rotate(-90deg) scaleY(1);
+    transform: rotate(-90deg) scaleX(1);
   }
 
   10% {
-    transform: rotate(-90deg) scaleY(1);
+    transform: rotate(-90deg) scaleX(1);
   }
 
   18% {
-    transform: rotate(-88deg) scaleY(1);
+    transform: rotate(-88deg) scaleX(1);
   }
 
   30% {
-    transform: rotate(-79deg) scaleY(1);
+    transform: rotate(-79deg) scaleX(1);
   }
 
   44% {
-    transform: rotate(-64deg) scaleY(1);
+    transform: rotate(-64deg) scaleX(1);
   }
 
   56% {
-    transform: rotate(-56deg) scaleY(1);
+    transform: rotate(-56deg) scaleX(1);
   }
 
   62% {
-    transform: rotate(-54deg) scaleY(1);
+    transform: rotate(-54deg) scaleX(1);
   }
 
   67% {
-    transform: rotate(-54deg) scaleY(1);
+    transform: rotate(-54deg) scaleX(1);
   }
 
   74% {
-    transform: rotate(-56deg) scaleY(1);
+    transform: rotate(-56deg) scaleX(1);
   }
 
   84% {
-    transform: rotate(-65deg) scaleY(1);
+    transform: rotate(-65deg) scaleX(1);
   }
 
   93% {
-    transform: rotate(-77deg) scaleY(1);
+    transform: rotate(-77deg) scaleX(1);
   }
 
-  /* groove contact */
   96% {
-    transform: rotate(-80deg) scaleY(1);
+    transform: rotate(-80deg) scaleX(1);
   }
 
-  /* tiny lower */
   98% {
-    transform: rotate(-80deg) scaleY(0.965);
+    transform: rotate(-80deg) scaleX(0.97);
   }
 
-  /* micro bounce */
   99% {
-    transform: rotate(-80deg) scaleY(0.975);
+    transform: rotate(-80deg) scaleX(0.985);
   }
 
-  /* settled on record */
   100% {
-    transform: rotate(-80deg) scaleY(0.94);
+    transform: rotate(-80deg) scaleX(0.94);
   }
 }
 
