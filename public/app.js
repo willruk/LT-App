@@ -190,9 +190,9 @@ function animateBirthSongTitle() {
   for (var i = 0; i < chars.length; i++) {
     (function (char, index) {
       setTimeout(function () {
-        char.textContent = char.getAttribute("data-char");
-        char.classList.add("resolved");
-      }, 220 + index * 45);
+  char.textContent = char.getAttribute("data-char");
+  char.classList.add("resolved");
+}, 3000 + index * 500);
     })(chars[i], i);
   }
 }
