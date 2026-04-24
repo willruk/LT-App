@@ -186,14 +186,22 @@ function renderAnimatedSongTitle(title) {
 
 function animateBirthSongTitle() {
   var chars = Array.prototype.slice.call(document.querySelectorAll(".song-char"));
-  var palette = ["var(--blue)", "var(--orange)", "var(--purple)"];
+  var palette = ["var(--blue)", "var(--orange)", "var(--purple)", "var(--muted)"];
+  var notes = ["♪", "♫", "♬"];
 
   for (var i = 0; i < chars.length; i++) {
-    chars[i].style.setProperty("--jangle-delay", (Math.random() * 0.6).toFixed(2) + "s");
-    chars[i].style.setProperty("--jangle-duration", (0.35 + Math.random() * 0.45).toFixed(2) + "s");
+    // random animation timing
+    chars[i].style.setProperty("--jangle-delay", (Math.random() * 0.8).toFixed(2) + "s");
+    chars[i].style.setProperty("--jangle-duration", (0.6 + Math.random() * 0.6).toFixed(2) + "s");
+
+    // random colour
     chars[i].style.color = palette[Math.floor(Math.random() * palette.length)];
+
+    // random note symbol
+    chars[i].textContent = notes[Math.floor(Math.random() * notes.length)];
   }
 
+  // random reveal order
   chars.sort(function () {
     return Math.random() - 0.5;
   });
@@ -203,7 +211,7 @@ function animateBirthSongTitle() {
       setTimeout(function () {
         char.textContent = char.getAttribute("data-char");
         char.classList.add("resolved");
-      }, 2000 + index * 200);
+      }, 2500 + index * 200); // ← 2.5s pause + 0.2s cadence
     })(chars[j], j);
   }
 }
