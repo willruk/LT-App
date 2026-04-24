@@ -257,18 +257,19 @@ function renderBirthSong(data) {
     "</div>";
 
   if (song.spotify && song.spotify.embedUrl) {
-    html +=
-  "<div class='spotify-embed-wrap'>" +
-    "<div class='spotify-label'>Preview on Spotify</div>" +
-    "<div class='spotify-embed'>" +
-      "<iframe" +
-        " src='" + escapeHtml(song.spotify.embedUrl) + "'" +
-        " allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'" +
-        " loading='lazy'" +
-        " title='Spotify player for " + escapeHtml(song.title) + " by " + escapeHtml(song.artist) + "'" +
-      "></iframe>" +
-    "</div>" +
-  "</div>";
+  html +=
+    "<div class='spotify-embed-wrap'>" +
+      "<div class='spotify-label'>Preview on Spotify</div>" +
+      "<div class='spotify-embed'>" +
+        "<iframe" +
+          " src='" + escapeHtml(song.spotify.embedUrl) + "'" +
+          " allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'" +
+          " loading='lazy'" +
+          " title='Spotify player for " + escapeHtml(song.title) + " by " + escapeHtml(song.artist) + "'" +
+        "></iframe>" +
+      "</div>" +
+    "</div>";
+}
 html += renderFullMusicButtons(song.spotifyUrl, song.appleMusicUrl);
     
   }
