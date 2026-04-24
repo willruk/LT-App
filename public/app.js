@@ -195,9 +195,11 @@ function renderBirthSong(data) {
           " title='Spotify player for " + escapeHtml(song.title) + " by " + escapeHtml(song.artist) + "'" +
         "></iframe>" +
       "</div>";
+html += renderFullMusicButtons(song.spotifyUrl, song.appleMusicUrl);
+    
   }
 
-  html += renderFullMusicButtons(song.spotifyUrl, song.appleMusicUrl);
+
 
   birthResult.innerHTML = html;
 }
