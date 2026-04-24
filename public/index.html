@@ -280,14 +280,16 @@
 @keyframes birthCardMoment {
   0% {
     opacity: 0;
-    transform: translateY(18px) scale(0.97);
+    transform: translateY(24px) scale(0.94);
     box-shadow: 0 0 0 rgba(255, 59, 226, 0);
   }
 
-  55% {
+  45% {
     opacity: 1;
-    transform: translateY(0) scale(1.015);
-    box-shadow: 0 0 34px rgba(255, 59, 226, 0.22);
+    transform: translateY(0) scale(1.035);
+    box-shadow:
+      0 0 0 1px rgba(255, 59, 226, 0.22),
+      0 0 42px rgba(255, 59, 226, 0.28);
   }
 
   100% {
@@ -295,7 +297,7 @@
     transform: translateY(0) scale(1);
     box-shadow: none;
   }
-}    
+}   
 
  #yearlyCard {
   position: relative;
