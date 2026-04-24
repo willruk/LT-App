@@ -113,7 +113,7 @@ function setLoading(isLoading) {
       stopVinylAnimation();
     }
   }, 600);
-}, 700);
+}, 250);
   }
 }
 
