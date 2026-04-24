@@ -234,10 +234,30 @@
     }
 
     #birthCard {
-      display: none;
-      opacity: 0;
-      transform: translateY(14px);
-    }
+  display: none;
+  opacity: 0;
+  transform: translateY(14px);
+  position: relative;
+  overflow: hidden;
+}
+
+#birthCard::before {
+  content: "";
+  position: absolute;
+  inset: -80px -40px auto -40px;
+  height: 180px;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 59, 226, 0.22), transparent 58%),
+    radial-gradient(circle at 50% 55%, rgba(42, 155, 255, 0.18), transparent 62%);
+  filter: blur(22px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#birthCard > * {
+  position: relative;
+  z-index: 1;
+}
 
     #birthCard .song-hero {
   margin-top: 6px;
@@ -322,20 +342,24 @@ input:focus {
 }
 
     .song-hero {
-      color: var(--pink);
-      font-weight: 900;
-      font-size: 1.4rem;
-      line-height: 1.2;
-      text-align: center;
-      margin-bottom: 8px;
-    }
+  color: var(--pink);
+  font-weight: 900;
+  font-size: 1.65rem;
+  line-height: 1.12;
+  text-align: center;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 18px rgba(255, 59, 226, 0.22);
+  animation: birthSongPop 0.55s ease both;
+}
 
     .artist {
-      color: var(--orange);
-      font-weight: 700;
-      margin-bottom: 10px;
-      text-align: left;
-    }
+  color: var(--orange);
+  font-weight: 800;
+  font-size: 1.05rem;
+  margin-bottom: 12px;
+  text-align: center;
+}
 
     .note {
       color: var(--muted);
@@ -1001,6 +1025,18 @@ input:focus {
         transform: translateY(0) scale(1);
       }
     }
+
+    @keyframes birthSongPop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 
     @keyframes cardReveal {
       from {
