@@ -272,9 +272,6 @@ function renderBirthSong(data) {
 }
 html += renderFullMusicButtons(song.spotifyUrl, song.appleMusicUrl);
     
-  }
-
-
 
   birthResult.innerHTML = html;
 
