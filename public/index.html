@@ -41,7 +41,7 @@
     }
 
     .wrap.results-active {
-      padding-top: 7px;
+      padding-top: 4px;
     }
 
     .header {
@@ -104,8 +104,9 @@
 
     .hero-logo-compact {
   position: absolute;
-  width: 100%;
-  max-width: 430px;
+  height: 36px; /* fixed height instead of scaling width */
+  width: auto;
+  max-width: none;
   opacity: 0;
   visibility: hidden;
   transform: scale(0.94);
@@ -113,18 +114,20 @@
 }
 
     .wrap.results-active .header {
-      min-height: 90px;
-      margin-bottom: 13px;
-    }
+  min-height: 0;
+  height: 64px; /* fixed compact height */
+  margin-bottom: 10px;
+  align-items: center;
+}
 
     .wrap.results-active .header::before {
-  inset: -70px -60px -130px -60px;
+  inset: -30px -40px -60px -40px;
   filter: blur(32px);
   opacity: 0.75;
 }
 
     .wrap.results-active .header::after {
-  inset: -90px -70px -150px -70px;
+  inset: -40px -50px -70px -50px;
   filter: blur(48px);
   opacity: 0.5;
 }
