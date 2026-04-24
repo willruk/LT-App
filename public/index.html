@@ -173,12 +173,12 @@
     }
 
     .card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px;
-      margin-top: 14px;
-    }
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 12px 16px 16px; /* less top padding */
+  margin-top: 14px;
+}
 
     #entryCard {
       transition: all 0.35s ease;
@@ -332,13 +332,31 @@ input:focus {
 
     .accent-heading {
   font-weight: 800;
-  font-size: 1.05rem;
-  line-height: 1.3;
-  margin-bottom: 10px;
+  font-size: 1.1rem;
+  line-height: 1.25;
+  margin-bottom: 12px;
+  margin-top: 2px;    
 
-  color: var(--muted); /* subtle, not competing */
-  letter-spacing: 0.04em;
+  color: #dbe4ff; /* slightly brighter than muted */
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+
+  position: relative;
+  padding-left: 12px;
+}
+
+    .accent-heading::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 4px;
+  height: 70%;
+  border-radius: 2px;
+
+  background: linear-gradient(180deg, var(--blue), var(--pink));
 }
 
     .song-hero {
