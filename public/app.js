@@ -10,11 +10,8 @@ var loadingOverlay = document.getElementById("loadingOverlay");
 var yearlyCard = document.getElementById("yearlyCard");
 var vinyl = document.querySelector(".vinyl");
 var vinylStartupTimeout = null;
-var vinyl = document.querySelector(".vinyl");
 var vinylStartupAnimation = null;
 var vinylContinuousAnimation = null;
-
-var vinyl = document.querySelector(".vinyl");
 var vinylRafId = null;
 var vinylStartTime = 0;
 var vinylLastTime = 0;
