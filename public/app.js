@@ -296,7 +296,7 @@ function finishAfterMinimum(startTime, callback) {
 function resetButton() {
   if (!goButton) return;
   goButton.disabled = false;
-  goButton.textContent = "Find my songs";
+  goButton.textContent = "Find My Songs";
 }
 
 function submit() {
