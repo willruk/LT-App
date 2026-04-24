@@ -189,29 +189,40 @@ function animateBirthSongTitle() {
   var palette = ["var(--blue)", "var(--orange)", "var(--purple)", "var(--muted)"];
   var notes = ["♪", "♫", "♬"];
 
+  // setup: randomise appearance + motion
   for (var i = 0; i < chars.length; i++) {
-    // random animation timing
     chars[i].style.setProperty("--jangle-delay", (Math.random() * 0.8).toFixed(2) + "s");
     chars[i].style.setProperty("--jangle-duration", (0.6 + Math.random() * 0.6).toFixed(2) + "s");
 
-    // random colour
     chars[i].style.color = palette[Math.floor(Math.random() * palette.length)];
-
-    // random note symbol
     chars[i].textContent = notes[Math.floor(Math.random() * notes.length)];
   }
 
-  // random reveal order
+  // shuffle reveal order
   chars.sort(function () {
     return Math.random() - 0.5;
   });
+
+  var total = chars.length;
+  var resolvedCount = 0;
 
   for (var j = 0; j < chars.length; j++) {
     (function (char, index) {
       setTimeout(function () {
         char.textContent = char.getAttribute("data-char");
         char.classList.add("resolved");
-      }, 2500 + index * 200); // ← 2.5s pause + 0.2s cadence
+
+        resolvedCount++;
+
+        // trigger glow when all done
+        if (resolvedCount === total) {
+          var title = document.querySelector(".song-hero");
+          if (title) {
+            title.classList.add("title-complete");
+          }
+        }
+
+      }, 2500 + index * 200);
     })(chars[j], j);
   }
 }
