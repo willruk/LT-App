@@ -125,9 +125,11 @@ function showResults() {
     birthCard.classList.remove("reveal-moment");
     birthCard.style.display = "block";
 
-    requestAnimationFrame(function () {
-      birthCard.classList.add("reveal-moment");
-    });
+    setTimeout(function () {
+  requestAnimationFrame(function () {
+    birthCard.classList.add("reveal-moment");
+  });
+}, 180);
   }
 
   if (yearlyCard) yearlyCard.style.display = "block";
