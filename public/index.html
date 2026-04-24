@@ -447,6 +447,32 @@ input:focus {
   text-shadow: 0 0 18px rgba(255, 59, 226, 0.24);
 }
 
+.song-hero.title-complete {
+  animation: titleGlowFlare 0.7s ease;
+}
+
+@keyframes titleGlowFlare {
+  0% {
+    text-shadow:
+      0 0 0 rgba(255, 59, 226, 0),
+      0 0 0 rgba(255, 138, 61, 0);
+    transform: scale(1);
+  }
+
+  40% {
+    text-shadow:
+      0 0 18px rgba(255, 59, 226, 0.6),
+      0 0 32px rgba(255, 138, 61, 0.45);
+    transform: scale(1.04);
+  }
+
+  100% {
+    text-shadow:
+      0 0 10px rgba(255, 59, 226, 0.25);
+    transform: scale(1);
+  }
+}
+
 @keyframes noteJangle {
   0% {
     transform: translateY(0) rotate(-4deg) scale(1);
