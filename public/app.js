@@ -216,11 +216,16 @@ function animateBirthSongTitle() {
 
         // trigger glow when all done
         if (resolvedCount === total) {
-          var title = document.querySelector(".song-hero");
-          if (title) {
-            title.classList.add("title-complete");
-          }
-        }
+  var title = document.querySelector(".song-hero");
+  if (title) {
+    title.classList.add("title-complete");
+  }
+
+  var birthCard = document.getElementById("birthCard");
+  if (birthCard) {
+    birthCard.classList.remove("birthcard-pending");
+  }
+}
 
       }, 2500 + index * 200);
     })(chars[j], j);
@@ -271,6 +276,12 @@ html += renderFullMusicButtons(song.spotifyUrl, song.appleMusicUrl);
 
 
   birthResult.innerHTML = html;
+
+var birthCard = document.getElementById("birthCard");
+if (birthCard) {
+  birthCard.classList.add("birthcard-pending");
+}
+
 animateBirthSongTitle();
 }
 
