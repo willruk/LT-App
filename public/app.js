@@ -1,4 +1,3 @@
-console.log("vinyl found:", !!vinyl);
 console.log("Life Tracks loaded");
 
 var birthdayInput = document.getElementById("birthday");
@@ -9,9 +8,7 @@ var yearlyResult = document.getElementById("yearlyResult");
 var loadingOverlay = document.getElementById("loadingOverlay");
 var yearlyCard = document.getElementById("yearlyCard");
 var vinyl = document.querySelector(".vinyl");
-var vinylStartupTimeout = null;
-var vinylStartupAnimation = null;
-var vinylContinuousAnimation = null;
+
 var vinylRafId = null;
 var vinylStartTime = 0;
 var vinylLastTime = 0;
@@ -54,9 +51,9 @@ function startVinylAnimation() {
   vinylLastTime = 0;
   vinylAngle = 0;
 
-  var initialPauseMs = 100;      // starts almost with tonearm
-  var rampDurationMs = 2600;     // time to reach full speed
-  var fullSpeedDegPerSec = 220;  // tune this for top speed
+  var initialPauseMs = 100;
+  var rampDurationMs = 2600;
+  var fullSpeedDegPerSec = 220;
 
   function frame(now) {
     if (!vinylRunning) return;
@@ -76,8 +73,7 @@ function startVinylAnimation() {
       speedDegPerSec = 0;
     } else if (elapsed <= initialPauseMs + rampDurationMs) {
       var t = (elapsed - initialPauseMs) / rampDurationMs;
-      var eased = easeOutCubic(t);
-      speedDegPerSec = fullSpeedDegPerSec * eased;
+      speedDegPerSec = fullSpeedDegPerSec * easeOutCubic(t);
     } else {
       speedDegPerSec = fullSpeedDegPerSec;
     }
@@ -104,16 +100,16 @@ function setLoading(isLoading) {
     });
   } else {
     setTimeout(function () {
-  loadingOverlay.classList.remove("active");
-  loadingOverlay.setAttribute("aria-hidden", "true");
+      loadingOverlay.classList.remove("active");
+      loadingOverlay.setAttribute("aria-hidden", "true");
 
-  setTimeout(function () {
-    if (!loadingOverlay.classList.contains("active")) {
-      loadingOverlay.style.display = "none";
-      stopVinylAnimation();
-    }
-  }, 600);
-}, 250);
+      setTimeout(function () {
+        if (!loadingOverlay.classList.contains("active")) {
+          loadingOverlay.style.display = "none";
+          stopVinylAnimation();
+        }
+      }, 600);
+    }, 250);
   }
 }
 
@@ -124,12 +120,14 @@ function showResults() {
   if (birthCard) {
     birthCard.classList.remove("reveal-moment");
     birthCard.style.display = "block";
+    birthCard.style.opacity = "0";
 
     setTimeout(function () {
-  requestAnimationFrame(function () {
-    birthCard.classList.add("reveal-moment");
-  });
-}, 180);
+      requestAnimationFrame(function () {
+        birthCard.style.opacity = "";
+        birthCard.classList.add("reveal-moment");
+      });
+    }, 180);
   }
 
   if (yearlyCard) yearlyCard.style.display = "block";
@@ -174,6 +172,7 @@ function renderAnimatedSongTitle(title) {
 
   for (var i = 0; i < safeTitle.length; i++) {
     var char = safeTitle.charAt(i);
+
     html +=
       "<span class='song-char' aria-hidden='true' data-char='" +
       escapeHtml(char) +
@@ -189,7 +188,6 @@ function animateBirthSongTitle() {
   var palette = ["var(--blue)", "var(--orange)", "var(--purple)", "var(--muted)"];
   var notes = ["♪", "♫", "♬"];
 
-  // setup: randomise appearance + motion
   for (var i = 0; i < chars.length; i++) {
     chars[i].style.setProperty("--jangle-delay", (Math.random() * 0.8).toFixed(2) + "s");
     chars[i].style.setProperty("--jangle-duration", (0.6 + Math.random() * 0.6).toFixed(2) + "s");
@@ -198,7 +196,6 @@ function animateBirthSongTitle() {
     chars[i].textContent = notes[Math.floor(Math.random() * notes.length)];
   }
 
-  // shuffle reveal order
   chars.sort(function () {
     return Math.random() - 0.5;
   });
@@ -214,22 +211,37 @@ function animateBirthSongTitle() {
 
         resolvedCount++;
 
-        // trigger glow when all done
         if (resolvedCount === total) {
-  var title = document.querySelector(".song-hero");
-  if (title) {
-    title.classList.add("title-complete");
-  }
+          var title = document.querySelector(".song-hero");
+          if (title) {
+            title.classList.add("title-complete");
+          }
 
-  var birthCard = document.getElementById("birthCard");
-  if (birthCard) {
-    birthCard.classList.remove("birthcard-pending");
-  }
-}
-
+          var birthCard = document.getElementById("birthCard");
+          if (birthCard) {
+            birthCard.classList.remove("birthcard-pending");
+          }
+        }
       }, 2500 + index * 200);
     })(chars[j], j);
   }
+}
+
+function getSpotifyEmbedUrl(song) {
+  if (!song) return "";
+
+  if (song.spotify && song.spotify.embedUrl) {
+    return song.spotify.embedUrl;
+  }
+
+  if (song.spotifyUrl) {
+    return String(song.spotifyUrl).replace(
+      "https://open.spotify.com/track/",
+      "https://open.spotify.com/embed/track/"
+    );
+  }
+
+  return "";
 }
 
 function renderBirthSong(data) {
@@ -239,10 +251,11 @@ function renderBirthSong(data) {
   }
 
   var song = data.birthSong;
+  var spotifyEmbedUrl = getSpotifyEmbedUrl(song);
 
   var html =
-  renderAnimatedSongTitle(song.title) +
-  "<div class='artist'>" + escapeHtml(song.artist) + "</div>";
+    renderAnimatedSongTitle(song.title) +
+    "<div class='artist'>" + escapeHtml(song.artist) + "</div>";
 
   if (song.startDateFormatted) {
     html +=
@@ -256,31 +269,31 @@ function renderBirthSong(data) {
     escapeHtml(song.blurb || "No database blurb available.") +
     "</div>";
 
-  if (song.spotify && song.spotify.embedUrl) {
-  html +=
-    "<div class='spotify-embed-wrap'>" +
-      "<div class='spotify-label'>Preview on Spotify</div>" +
-      "<div class='spotify-embed'>" +
-        "<iframe" +
-          " src='" + escapeHtml(song.spotify.embedUrl) + "'" +
-          " allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'" +
-          " loading='lazy'" +
-          " title='Spotify player for " + escapeHtml(song.title) + " by " + escapeHtml(song.artist) + "'" +
-        "></iframe>" +
-      "</div>" +
-    "</div>";
-}
-html += renderFullMusicButtons(song.spotifyUrl, song.appleMusicUrl);
-    
+  if (spotifyEmbedUrl) {
+    html +=
+      "<div class='spotify-embed-wrap'>" +
+        "<div class='spotify-label'>Preview on Spotify</div>" +
+        "<div class='spotify-embed'>" +
+          "<iframe" +
+            " src='" + escapeHtml(spotifyEmbedUrl) + "'" +
+            " allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'" +
+            " loading='lazy'" +
+            " title='Spotify player for " + escapeHtml(song.title) + " by " + escapeHtml(song.artist) + "'" +
+          "></iframe>" +
+        "</div>" +
+      "</div>";
+  }
+
+  html += renderFullMusicButtons(song.spotifyUrl, song.appleMusicUrl);
 
   birthResult.innerHTML = html;
 
-var birthCard = document.getElementById("birthCard");
-if (birthCard) {
-  birthCard.classList.add("birthcard-pending");
-}
+  var birthCard = document.getElementById("birthCard");
+  if (birthCard) {
+    birthCard.classList.add("birthcard-pending");
+  }
 
-animateBirthSongTitle();
+  animateBirthSongTitle();
 }
 
 function renderYearlySongs(rows) {
@@ -355,6 +368,7 @@ function attachTriviaToggles() {
       for (var j = 0; j < allPanels.length; j++) {
         allPanels[j].hidden = true;
       }
+
       for (var k = 0; k < allButtons.length; k++) {
         allButtons[k].setAttribute("aria-expanded", "false");
       }
@@ -369,11 +383,13 @@ function finishAfterMinimum(startTime, callback) {
   var minimumLoadingTime = 3000;
   var elapsed = Date.now() - startTime;
   var remaining = Math.max(0, minimumLoadingTime - elapsed);
+
   setTimeout(callback, remaining);
 }
 
 function resetButton() {
   if (!goButton) return;
+
   goButton.disabled = false;
   goButton.textContent = "Find My Songs";
 }
@@ -396,6 +412,7 @@ function submit() {
         if (!res.ok) {
           throw new Error(data && data.error ? data.error : "Error");
         }
+
         return data;
       });
     })
