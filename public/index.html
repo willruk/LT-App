@@ -444,6 +444,42 @@
       opacity: 0.95;
     }
 
+    .full-music-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.full-music-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: white;
+  transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.full-music-button:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+}
+
+.spotify-full {
+  background: linear-gradient(135deg, #1DB954, #159947);
+}
+
+.apple-full {
+  background: linear-gradient(135deg, #111827, #0b0b0f);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
     .trivia-toggle {
       display: inline-flex;
       align-items: center;
@@ -964,6 +1000,10 @@
       .music-buttons img {
         height: 28px;
       }
+
+      .full-music-buttons {
+  grid-template-columns: 1fr;
+}
 
       .year-card-rich {
         padding: 12px 12px 14px;
