@@ -242,6 +242,10 @@
   margin-bottom: 26px;
 }
 
+#birthCard .accent-heading::before {
+  content: "👶";
+}
+    
 #birthCard::before {
   content: "";
   position: absolute;
@@ -357,18 +361,24 @@ input:focus {
   text-transform: uppercase;
 
   position: relative;
-  padding-left: 22px;
+  padding-left: 26px;
 }
 
     .accent-heading::before {
-  content: "🎶";
+  content: "🎉 "; /* default for timeline */
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-52%);
 
-  font-size: 0.95rem;
-  opacity: 0.9;
+  font-size: 1rem;
+  opacity: 1;
+
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+
+    .accent-heading::before {
+  filter: drop-shadow(0 0 4px rgba(255, 59, 226, 0.25));
 }
 
     .song-hero {
