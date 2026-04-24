@@ -239,6 +239,7 @@
   transform: translateY(14px);
   position: relative;
   overflow: hidden;
+  margin-bottom: 26px;
 }
 
 #birthCard::before {
@@ -262,6 +263,20 @@
     #birthCard .song-hero {
   margin-top: 6px;
 }
+
+ #yearlyCard {
+  position: relative;
+}
+
+#yearlyCard::before {
+  content: "";
+  position: absolute;
+  top: -16px;
+  left: 18px;
+  right: 18px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+}   
 
     .wrap.results-active #birthCard {
       display: block;
@@ -352,11 +367,12 @@ input:focus {
   top: 50%;
   transform: translateY(-50%);
 
-  width: 4px;
-  height: 70%;
-  border-radius: 2px;
+  width: 6px;
+  height: 100%;
+  border-radius: 999px;
 
-  background: linear-gradient(180deg, var(--blue), var(--pink));
+  background: linear-gradient(180deg, var(--blue), var(--pink), var(--orange));
+  box-shadow: 0 0 10px rgba(255, 59, 226, 0.35);
 }
 
     .song-hero {
@@ -1216,7 +1232,7 @@ input:focus {
     </div>
 
     <div class="card" id="yearlyCard" style="display:none;">
-      <h2 class="accent-heading">Here are the hottest tracks from all of your birthdays</h2>
+      <h2 class="accent-heading">Your Musical Journey:</h2>
       <div id="yearlyResult" class="note"></div>
     </div>
 
