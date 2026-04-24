@@ -357,22 +357,18 @@ input:focus {
   text-transform: uppercase;
 
   position: relative;
-  padding-left: 12px;
+  padding-left: 22px;
 }
 
     .accent-heading::before {
-  content: "";
+  content: "🎶";
   position: absolute;
   left: 0;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-52%);
 
-  width: 6px;
-  height: 100%;
-  border-radius: 999px;
-
-  background: linear-gradient(180deg, var(--blue), var(--pink), var(--orange));
-  box-shadow: 0 0 10px rgba(255, 59, 226, 0.35);
+  font-size: 0.95rem;
+  opacity: 0.9;
 }
 
     .song-hero {
