@@ -168,6 +168,35 @@ function renderFullMusicButtons(spotifyUrl, appleUrl) {
   );
 }
 
+function renderAnimatedSongTitle(title) {
+  var safeTitle = String(title || "");
+  var html = "<div class='song-hero animated-title' aria-label='" + escapeHtml(safeTitle) + "'>";
+
+  for (var i = 0; i < safeTitle.length; i++) {
+    var char = safeTitle.charAt(i);
+    html +=
+      "<span class='song-char' aria-hidden='true' data-char='" +
+      escapeHtml(char) +
+      "'>♪</span>";
+  }
+
+  html += "</div>";
+  return html;
+}
+
+function animateBirthSongTitle() {
+  var chars = document.querySelectorAll(".song-char");
+
+  for (var i = 0; i < chars.length; i++) {
+    (function (char, index) {
+      setTimeout(function () {
+        char.textContent = char.getAttribute("data-char");
+        char.classList.add("resolved");
+      }, 220 + index * 45);
+    })(chars[i], i);
+  }
+}
+
 function renderBirthSong(data) {
   if (!data || !data.birthSong) {
     birthResult.innerHTML = "No data found.";
@@ -177,8 +206,8 @@ function renderBirthSong(data) {
   var song = data.birthSong;
 
   var html =
-    "<div class='song-hero'>" + escapeHtml(song.title) + "</div>" +
-    "<div class='artist'>" + escapeHtml(song.artist) + "</div>";
+  renderAnimatedSongTitle(song.title) +
+  "<div class='artist'>" + escapeHtml(song.artist) + "</div>";
 
   if (song.startDateFormatted) {
     html +=
@@ -212,6 +241,7 @@ html += renderFullMusicButtons(song.spotifyUrl, song.appleMusicUrl);
 
 
   birthResult.innerHTML = html;
+animateBirthSongTitle();
 }
 
 function renderYearlySongs(rows) {
