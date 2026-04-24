@@ -230,15 +230,32 @@ function animateBirthSongTitle() {
 function getSpotifyEmbedUrl(song) {
   if (!song) return "";
 
+  var rawUrl = "";
+
   if (song.spotify && song.spotify.embedUrl) {
-    return song.spotify.embedUrl;
+    rawUrl = song.spotify.embedUrl;
+  } else if (song.spotifyUrl) {
+    rawUrl = song.spotifyUrl;
   }
 
-  if (song.spotifyUrl) {
-    var url = String(song.spotifyUrl).split("?")[0];
+  if (!rawUrl) return "";
 
-    if (url.indexOf("open.spotify.com/track/") !== -1) {
-      var trackId = url.split("/track/")[1];
+  rawUrl = String(rawUrl).trim();
+
+  // Already an embed URL
+  if (rawUrl.indexOf("open.spotify.com/embed/track/") !== -1) {
+    return rawUrl;
+  }
+
+  // Normal Spotify track URL
+  if (rawUrl.indexOf("open.spotify.com/track/") !== -1) {
+    var trackId = rawUrl.split("/track/")[1];
+
+    if (trackId) {
+      trackId = trackId.split("?")[0];
+      trackId = trackId.split("&")[0];
+      trackId = trackId.split("/")[0];
+
       return "https://open.spotify.com/embed/track/" + trackId;
     }
   }
