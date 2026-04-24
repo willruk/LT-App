@@ -235,10 +235,12 @@ function getSpotifyEmbedUrl(song) {
   }
 
   if (song.spotifyUrl) {
-    return String(song.spotifyUrl).replace(
-      "https://open.spotify.com/track/",
-      "https://open.spotify.com/embed/track/"
-    );
+    var url = String(song.spotifyUrl).split("?")[0];
+
+    if (url.indexOf("open.spotify.com/track/") !== -1) {
+      var trackId = url.split("/track/")[1];
+      return "https://open.spotify.com/embed/track/" + trackId;
+    }
   }
 
   return "";
