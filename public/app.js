@@ -150,12 +150,9 @@ function renderMusicButtons(spotifyUrl, appleUrl) {
 
 function renderFullMusicButtons(spotifyUrl, appleUrl) {
   return (
-    "<div class='full-music-buttons'>" +
-      "<a class='full-music-button spotify-full' href='" + escapeHtml(spotifyUrl) + "' target='_blank' rel='noopener noreferrer'>" +
-        "Find on Spotify" +
-      "</a>" +
+    "<div class='full-music-buttons single'>" +
       "<a class='full-music-button apple-full' href='" + escapeHtml(appleUrl) + "' target='_blank' rel='noopener noreferrer'>" +
-        "Find on Apple Music" +
+        "or Find on Apple Music" +
       "</a>" +
     "</div>"
   );
@@ -187,14 +184,17 @@ function renderBirthSong(data) {
 
   if (song.spotify && song.spotify.embedUrl) {
     html +=
-      "<div class='spotify-embed'>" +
-        "<iframe" +
-          " src='" + escapeHtml(song.spotify.embedUrl) + "'" +
-          " allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'" +
-          " loading='lazy'" +
-          " title='Spotify player for " + escapeHtml(song.title) + " by " + escapeHtml(song.artist) + "'" +
-        "></iframe>" +
-      "</div>";
+  "<div class='spotify-embed-wrap'>" +
+    "<div class='spotify-label'>Preview on Spotify</div>" +
+    "<div class='spotify-embed'>" +
+      "<iframe" +
+        " src='" + escapeHtml(song.spotify.embedUrl) + "'" +
+        " allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'" +
+        " loading='lazy'" +
+        " title='Spotify player for " + escapeHtml(song.title) + " by " + escapeHtml(song.artist) + "'" +
+      "></iframe>" +
+    "</div>" +
+  "</div>";
 html += renderFullMusicButtons(song.spotifyUrl, song.appleMusicUrl);
     
   }
