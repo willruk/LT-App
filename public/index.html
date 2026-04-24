@@ -104,9 +104,9 @@
 
     .hero-logo-compact {
   position: absolute;
-  height: 36px; /* fixed height instead of scaling width */
+  height: 72px;
   width: auto;
-  max-width: none;
+  max-width: 86vw;
   opacity: 0;
   visibility: hidden;
   transform: scale(0.94);
@@ -115,20 +115,20 @@
 
     .wrap.results-active .header {
   min-height: 0;
-  height: 64px; /* fixed compact height */
-  margin-bottom: 10px;
+  height: 108px;
+  margin-bottom: 8px;
   align-items: center;
 }
 
     .wrap.results-active .header::before {
-  inset: -30px -40px -60px -40px;
-  filter: blur(32px);
-  opacity: 0.75;
+  inset: -55px -55px -95px -55px;
+  filter: blur(38px);
+  opacity: 0.78;
 }
 
     .wrap.results-active .header::after {
-  inset: -40px -50px -70px -50px;
-  filter: blur(48px);
+  inset: -65px -65px -110px -65px;
+  filter: blur(54px);
   opacity: 0.5;
 }
 
@@ -157,10 +157,8 @@
     }
 
     .wrap.results-active .subtitle {
-      font-size: 0.88rem;
-      margin-top: -2px;
-      margin-bottom: 10px;
-    }
+  display: none;
+}
 
     .subtitle-icon {
       display: block;
