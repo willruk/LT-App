@@ -121,7 +121,15 @@ function showResults() {
   var birthCard = document.getElementById("birthCard");
   var wrap = document.querySelector(".wrap");
 
-  if (birthCard) birthCard.style.display = "block";
+  if (birthCard) {
+    birthCard.classList.remove("reveal-moment");
+    birthCard.style.display = "block";
+
+    requestAnimationFrame(function () {
+      birthCard.classList.add("reveal-moment");
+    });
+  }
+
   if (yearlyCard) yearlyCard.style.display = "block";
   if (wrap) wrap.classList.add("results-active");
 }
