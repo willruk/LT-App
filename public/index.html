@@ -45,15 +45,16 @@
     }
 
     .header {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 220px;
-      margin-bottom: 26px;
-      overflow: visible;
-      transition: min-height 0.45s ease, margin-bottom 0.45s ease;
-    }
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 220px;
+  margin-bottom: 26px;
+  overflow: visible;
+  transition: min-height 0.45s ease, margin-bottom 0.45s ease;
+}
 
     .header::before {
       content: "";
@@ -64,7 +65,7 @@
         radial-gradient(circle at 50% 55%, rgba(255, 59, 226, 0.30), transparent 36%),
         radial-gradient(circle at 50% 52%, rgba(106, 61, 255, 0.40), transparent 65%);
       pointer-events: none;
-      z-index: 0;
+      z-index: -1;
       filter: blur(40px);
       mask-image: linear-gradient(
         to bottom,
@@ -85,7 +86,7 @@
         radial-gradient(circle at 50% 50%, rgba(42, 155, 255, 0.15), transparent 60%);
       filter: blur(60px);
       pointer-events: none;
-      z-index: 0;
+      z-index: -1;
       opacity: 1;
       transition: inset 0.45s ease, filter 0.45s ease, opacity 0.45s ease;
     }
@@ -126,16 +127,16 @@
     }
 
     .wrap.results-active .header::before {
-      inset: -40px -20px -100px -20px;
-      filter: blur(24px);
-      opacity: 0.75;
-    }
+  inset: -70px -60px -130px -60px;
+  filter: blur(32px);
+  opacity: 0.75;
+}
 
     .wrap.results-active .header::after {
-      inset: -60px -30px -120px -30px;
-      filter: blur(40px);
-      opacity: 0.5;
-    }
+  inset: -90px -70px -150px -70px;
+  filter: blur(48px);
+  opacity: 0.5;
+}
 
     .wrap.results-active .hero-logo-main {
       opacity: 0;
