@@ -148,6 +148,19 @@ function renderMusicButtons(spotifyUrl, appleUrl) {
   );
 }
 
+function renderFullMusicButtons(spotifyUrl, appleUrl) {
+  return (
+    "<div class='full-music-buttons'>" +
+      "<a class='full-music-button spotify-full' href='" + escapeHtml(spotifyUrl) + "' target='_blank' rel='noopener noreferrer'>" +
+        "Find on Spotify" +
+      "</a>" +
+      "<a class='full-music-button apple-full' href='" + escapeHtml(appleUrl) + "' target='_blank' rel='noopener noreferrer'>" +
+        "Find on Apple Music" +
+      "</a>" +
+    "</div>"
+  );
+}
+
 function renderBirthSong(data) {
   if (!data || !data.birthSong) {
     birthResult.innerHTML = "No data found.";
@@ -184,7 +197,7 @@ function renderBirthSong(data) {
       "</div>";
   }
 
-  html += renderMusicButtons(song.spotifyUrl, song.appleMusicUrl);
+  html += renderFullMusicButtons(song.spotifyUrl, song.appleMusicUrl);
 
   birthResult.innerHTML = html;
 }
