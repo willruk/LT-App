@@ -433,18 +433,17 @@ input:focus {
 .song-char {
   display: inline-block;
   min-width: 0.35em;
-  color: var(--pink);
-  animation: noteJangle 0.45s ease-in-out infinite alternate;
+  animation: noteJangle var(--jangle-duration, 0.45s) ease-in-out infinite alternate;
+  animation-delay: var(--jangle-delay, 0s);
   transition:
     transform 0.28s ease,
     color 0.28s ease,
     text-shadow 0.28s ease;
-  animation-delay: calc(var(--i) * 0.05s);
 }
 
 .song-char.resolved {
   animation: charResolve 0.38s ease both;
-  color: var(--pink);
+  color: var(--pink) !important;
   text-shadow: 0 0 18px rgba(255, 59, 226, 0.24);
 }
 
@@ -1349,6 +1348,6 @@ input:focus {
 </div>
     <div class="loading-text">Finding your tracks…</div>
   </div>
-  <script src="/app.js?v=31"></script>
+  <script src="/app.js?v=32"></script>
 </body>
 </html>
