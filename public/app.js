@@ -185,15 +185,26 @@ function renderAnimatedSongTitle(title) {
 }
 
 function animateBirthSongTitle() {
-  var chars = document.querySelectorAll(".song-char");
+  var chars = Array.prototype.slice.call(document.querySelectorAll(".song-char"));
+  var palette = ["var(--blue)", "var(--orange)", "var(--purple)"];
 
   for (var i = 0; i < chars.length; i++) {
+    chars[i].style.setProperty("--jangle-delay", (Math.random() * 0.6).toFixed(2) + "s");
+    chars[i].style.setProperty("--jangle-duration", (0.35 + Math.random() * 0.45).toFixed(2) + "s");
+    chars[i].style.color = palette[Math.floor(Math.random() * palette.length)];
+  }
+
+  chars.sort(function () {
+    return Math.random() - 0.5;
+  });
+
+  for (var j = 0; j < chars.length; j++) {
     (function (char, index) {
       setTimeout(function () {
-  char.textContent = char.getAttribute("data-char");
-  char.classList.add("resolved");
-}, 3000 + index * 500);
-    })(chars[i], i);
+        char.textContent = char.getAttribute("data-char");
+        char.classList.add("resolved");
+      }, 2000 + index * 200);
+    })(chars[j], j);
   }
 }
 
