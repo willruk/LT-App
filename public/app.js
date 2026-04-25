@@ -296,21 +296,31 @@ console.log("spotifyEmbedUrl:", spotifyEmbedUrl);
     "</div>";
 
   if (spotifyEmbedUrl) {
-    html +=
-      "<div class='spotify-embed-wrap'>" +
-        "<div class='spotify-label'>Preview on Spotify</div>" +
-        "<div class='spotify-embed'>" +
-          "<iframe" +
-            " src='" + escapeHtml(spotifyEmbedUrl) + "'" +
-            " allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'" +
-            " loading='lazy'" +
-            " title='Spotify player for " + escapeHtml(song.title) + " by " + escapeHtml(song.artist) + "'" +
-          "></iframe>" +
-        "</div>" +
-      "</div>";
-  }
+  html +=
+    "<div class='spotify-embed-wrap'>" +
+      "<div class='spotify-label'>Preview on Spotify</div>" +
+      "<div class='spotify-embed'>" +
+        "<iframe" +
+          " src='" + escapeHtml(spotifyEmbedUrl) + "'" +
+          " allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'" +
+          " loading='lazy'" +
+          " title='Spotify player for " + escapeHtml(song.title) + " by " + escapeHtml(song.artist) + "'" +
+        "></iframe>" +
+      "</div>" +
+    "</div>";
+} else if (song.spotifyUrl) {
+  html +=
+    "<div class='spotify-embed-wrap'>" +
+      "<div class='spotify-label'>Find on Spotify</div>" +
+      "<a class='full-music-button spotify-full spotify-search-full' href='" +
+        escapeHtml(song.spotifyUrl) +
+        "' target='_blank' rel='noopener noreferrer'>" +
+        "Find on Spotify" +
+      "</a>" +
+    "</div>";
+}
 
-  html += renderFullMusicButtons(song.spotifyUrl, song.appleMusicUrl);
+html += renderFullMusicButtons(song.spotifyUrl, song.appleMusicUrl);
 
   birthResult.innerHTML = html;
 
