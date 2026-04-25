@@ -230,38 +230,45 @@ function animateBirthSongTitle() {
 function getSpotifyEmbedUrl(song) {
   if (!song) return "";
 
-  var rawUrl = "";
+  var possibleUrls = [
+    song.spotifyEmbedUrl,
+    song.embedUrl,
+    song.spotify_embed_url,
+    song.spotify_embed,
+    song.spotify && song.spotify.embedUrl,
+    song.spotify && song.spotify.embed_url,
+    song.spotify && song.spotify.url,
+    song.spotifyUrl
+  ];
 
-  if (song.spotify && song.spotify.embedUrl) {
-    rawUrl = song.spotify.embedUrl;
-  } else if (song.spotifyUrl) {
-    rawUrl = song.spotifyUrl;
-  }
+  for (var i = 0; i < possibleUrls.length; i++) {
+    var rawUrl = possibleUrls[i];
 
-  if (!rawUrl) return "";
+    if (!rawUrl) continue;
 
-  rawUrl = String(rawUrl).trim();
+    rawUrl = String(rawUrl).trim();
 
-  // Already an embed URL
-  if (rawUrl.indexOf("open.spotify.com/embed/track/") !== -1) {
-    return rawUrl;
-  }
+    if (rawUrl.indexOf("open.spotify.com/embed/track/") !== -1) {
+      return rawUrl;
+    }
 
-  // Normal Spotify track URL
-  if (rawUrl.indexOf("open.spotify.com/track/") !== -1) {
-    var trackId = rawUrl.split("/track/")[1];
+    if (rawUrl.indexOf("open.spotify.com/track/") !== -1) {
+      var trackId = rawUrl.split("/track/")[1];
 
-    if (trackId) {
-      trackId = trackId.split("?")[0];
-      trackId = trackId.split("&")[0];
-      trackId = trackId.split("/")[0];
+      if (trackId) {
+        trackId = trackId.split("?")[0];
+        trackId = trackId.split("&")[0];
+        trackId = trackId.split("/")[0];
 
-      return "https://open.spotify.com/embed/track/" + trackId;
+        return "https://open.spotify.com/embed/track/" + trackId;
+      }
     }
   }
 
   return "";
 }
+
+console.log("spotifyEmbedUrl:", spotifyEmbedUrl, song);
 
 function renderBirthSong(data) {
   if (!data || !data.birthSong) {
