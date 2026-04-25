@@ -269,8 +269,15 @@ function renderBirthSong(data) {
     return;
   }
 
-  var song = data.birthSong;
-  var spotifyEmbedUrl = getSpotifyEmbedUrl(song);
+var song = data.birthSong;
+
+console.log("BIRTH SONG DATA:", song);
+console.log("spotifyUrl:", song.spotifyUrl);
+console.log("spotify object:", song.spotify);
+
+var spotifyEmbedUrl = getSpotifyEmbedUrl(song);
+
+console.log("spotifyEmbedUrl:", spotifyEmbedUrl);
 
   var html =
     renderAnimatedSongTitle(song.title) +
