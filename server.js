@@ -1,3 +1,5 @@
+console.log(process.env.DATABASE_URL);
+
 import express from "express";
 import helmet from "helmet";
 import compression from "compression";
