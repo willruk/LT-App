@@ -268,7 +268,6 @@ function getSpotifyEmbedUrl(song) {
   return "";
 }
 
-console.log("spotifyEmbedUrl:", spotifyEmbedUrl, song);
 
 function renderBirthSong(data) {
   if (!data || !data.birthSong) {
@@ -277,7 +276,7 @@ function renderBirthSong(data) {
   }
 
 var song = data.birthSong;
-
+console.log("spotifyEmbedUrl:", spotifyEmbedUrl, song);
 console.log("BIRTH SONG DATA:", song);
 console.log("spotifyUrl:", song.spotifyUrl);
 console.log("spotify object:", song.spotify);
